@@ -4,10 +4,12 @@
  library(dplyr)
  library(sp)
 
+
 source("Prepare data.R")
 source("MergeGemeenteJaar.R")
 source("Opschonen van alle datasets.R")
-source("Clusters, classificatie en tree.R")
+source("Clusters, classificatie en tree.R") 
+  
  
 
 ui1 <- fluidPage(
@@ -108,13 +110,13 @@ server1 <- function(input, output, session){
     
     
     ##Op het moment dat de onderstaande code wordt aangeroepen wordt de tekst voor de pop gemaakt.
-    state_popup <- paste0("<strong>Name of the country </strong>", 
+    state_popup <- paste0("<strong>Name of the district: </strong>", 
                           inputx()$buurtnaam, 
-                          "<br><strong> information is  </strong>", 
+                          "<br><strong>Value is:   </strong>", 
                           inputx()@data[,input$Var],
                           
                           sep = "<br/>", ##Hier wordt 'link_click' gebruikt om te navigeren naar de pagina met het Dashboard
-                          actionLink("?url=Test/Dashboard", "Ga naar het dashboard", onclick = 'Shiny.onInputChange(\"link_click\",  Math.random())'),
+                          actionLink("?url=Test/Dashboard", "Ga naar het dashboard ", onclick = 'Shiny.onInputChange(\"link_click\",  Math.random())'),
                           "Via het dashboard ziet u in een oogopslag de belangrijkste gegevens over deze wijk!"
     )
     
