@@ -17,7 +17,7 @@ ui1 <- fluidPage(
       sliderTextInput(inputId = 'Input1', label = 'Cultuur & recreatie: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
       sliderTextInput(inputId = 'Input2', label = 'Dichtheid bevolking: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
       sliderTextInput(inputId = 'Input3', label = 'Parkeergelegenheid: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
-      sliderTextInput(inputId = 'Input4', label = 'Woninggroote: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
+      sliderTextInput(inputId = 'Input4', label = 'Woninggrootte: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
      # textOutput("treepred"),
       selectInput(inputId = "Jaartal", "Uit welk jaar wilt u de gegevens zien?", choices = 
                     c('2018' = 'Buurt.Pol2018',
@@ -45,7 +45,7 @@ ui1 <- fluidPage(
                            ),
                            plotOutput('Tijdlijn')
                   ),
-                  tabPanel("Descision tree"
+                  tabPanel("Decision tree"
                   )
                   
       )

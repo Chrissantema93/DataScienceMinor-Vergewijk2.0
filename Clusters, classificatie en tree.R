@@ -61,14 +61,14 @@ for(i in 7:ncol(descision.test)){
 descision.test$Cultuur_recreatie   <- rowMeans(descision.test[,c("R-U_Cultuur,_recreatie,_overige_diensten_aantal", "H+J_Vervoer,_informatie_en_communicatie_aantal", "G+I_Handel_en_horeca_aantal", "Bedrijfsvestigingen_totaal_aantal")] )
 descision.test$Dichtheid_Bevolking <- rowMeans(descision.test[,c("Bevolkingsdichtheid_aantal_inwoners_per_km2", "Omgevingsadressendichtheid_per_km2", "Personenauto's_naar_oppervlakte_per_km2", "Percentage_meergezinswoning_%", "Mate_van_stedelijkheid_code")] )
 descision.test$Parkeergelegenheid  <- rowMeans(descision.test[,c("Motortweewielers_aantal", "Personenauto's_totaal_aantal", "Personenauto's;_6_jaar_en_ouder_aantal", "Personenauto's;_jonger_dan_6_jaar_aantal")] )
-descision.test$mean_Woning_groote  <- rowMeans(descision.test[,c( "Hoekwoning_m3", "Hoekwoning_m3", "Huurwoning_m3", "Koopwoning_m3", "Tussenwoning_m3", "Vrijstaande_woning_m3", "Appartement_m3")] )
-descision.test$Woning_groote       <- rowMeans(descision.test[,c("mean_Woning_groote", "Gemiddelde_woningwaarde_x_1_000_euro", "Bouwjaar_voor_2000_%")] )
+descision.test$mean_Woning_grootte  <- rowMeans(descision.test[,c( "Hoekwoning_m3", "Hoekwoning_m3", "Huurwoning_m3", "Koopwoning_m3", "Tussenwoning_m3", "Vrijstaande_woning_m3", "Appartement_m3")] )
+descision.test$Woning_grootte       <- rowMeans(descision.test[,c("mean_Woning_grootte", "Gemiddelde_woningwaarde_x_1_000_euro", "Bouwjaar_voor_2000_%")] )
 
 #Deze regel werkte niet
 #descision.test$Inkomen <- rowMeans(descision.test[,c("Gemiddeld_inkomen_per_inwoners.x_1_000_euro", "20%_personen_met_hoogste_inkomen%", "Gemiddelde_woningwaarde_x_1_000_euro", "20%huishoudens_met_hoogste_inkomen%")] ) 
 
 #Nieuwe kolommen in een andere set plaatsen
-Test.set <- descision.test[,c("Codering_code", "Jaar_","Cultuur_recreatie", "Dichtheid_Bevolking", "Parkeergelegenheid", "Woning_groote")] 
+Test.set <- descision.test[,c("Codering_code", "Jaar_","Cultuur_recreatie", "Dichtheid_Bevolking", "Parkeergelegenheid", "Woning_grootte")] 
 #################################
 #Test.set <- Test.set[Test.set$Jaar_ == 2017 ,]
 
@@ -87,7 +87,7 @@ plot3 <-  ggplot(Test.set, aes(Parkeergelegenheid))  +
   geom_histogram(binwidth = 0.1, aes(y=..density..), fill="yellow") +
   geom_density(fill="red", alpha=.2)
 
-plot4 <- ggplot(Test.set, aes(Woning_groote))  +
+plot4 <- ggplot(Test.set, aes(Woning_grootte))  +
   geom_histogram(binwidth = 0.1, aes(y=..density..), fill="yellow") +
   geom_density(fill="red", alpha=.2)
 
