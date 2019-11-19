@@ -87,8 +87,8 @@ rownames(buurten2018) <- make.unique(buurten2018[,2])
 #InwonersPerWijk <- states@data$Aantal_inwoners_aantal[which(states@data$Soort_regio_omschrijving == "Buurt")]
 
 
-#als eerst vul ik de lijst op met één 0, omdat de lijst 93 lang moet zijn en niet 92
-#dan doe ik alles + 1 omdat de helekaart grijs wordt als er één 0 in de vector zit
+#als eerst vul ik de lijst op met ??n 0, omdat de lijst 93 lang moet zijn en niet 92
+#dan doe ik alles + 1 omdat de helekaart grijs wordt als er ??n 0 in de vector zit
 #daarna alles X50 zodat het wat beter schaalt, de kleuren gaan van 10 tot 1.000.000 en de normale
 #waardes zitten tussen de 0 en ~20.000 ofzo dus dan heb je weinig kleurverschil
 
@@ -131,7 +131,7 @@ pal <- colorNumeric("viridis", NULL)
 
 
 
-shinyApp(ui = ui1, server = server1)        
+       
 
 
 

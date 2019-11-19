@@ -4,30 +4,11 @@
  library(dplyr)
  library(sp)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-library(shinyWidgets)
-library(leaflet)
-library(shiny)
-library(dplyr)
-library(sp)
-
+source("Prepare data.R")
+source("MergeGemeenteJaar.R")
+source("Opschonen van alle datasets.R")
+source("Clusters, classificatie en tree.R")
+ 
 
 ui1 <- fluidPage(
   titlePanel("Vergewijk 'Welke wijk is geschikt voor mij?'."),
