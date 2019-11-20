@@ -34,14 +34,14 @@ detachAllPkgs()
 InstallAndLoadPkgs(c("shiny"       , # Om de data te presenteren
                      "shinyWidgets", # Nodig voor slidertextinput
                      "leaflet"     , # Map in shiny
-                     "dplyr"       , # ???
+                     "dplyr"       , # ??? https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html 
                      "data.table"  , # ???
                      "rpart"       , # Nodig voor maken decision tree
                      "maptree"     , # Plot een betere tree dan rpart
                      "tidyverse"   , # Een pakket met van alles
                      "gridExtra"   , # Hiermee zet je plotjes netjes naast elkaar
                      "partykit"    , # Gebruiken we deze nog?
-                     "sp"          , # ???
-                     "geojsonio"
+                     "sp"          , # Voor het mergen van de Spatial Polygon data
+                     "geojsonio"     # Voor zover ik weet wordt deze niet meer gebruikt
                      ))
 

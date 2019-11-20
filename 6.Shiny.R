@@ -3,6 +3,8 @@
 # 6.Shiny.R
 #####################################
 
+
+
 ui1 <- fluidPage(
   titlePanel("Vergewijk 'Welke wijk is geschikt voor mij?'."),
   sidebarLayout(
@@ -11,7 +13,7 @@ ui1 <- fluidPage(
       sliderTextInput(inputId = 'Input2', label = 'Dichtheid bevolking: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
       sliderTextInput(inputId = 'Input3', label = 'Parkeergelegenheid: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
       sliderTextInput(inputId = 'Input4', label = 'Woninggrootte: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
-     # textOutput("treepred"),
+      # textOutput("treepred"),
       selectInput(inputId = "Jaartal", "Uit welk jaar wilt u de gegevens zien?", choices = 
                     c('2018' = 'Buurt.Pol2018',
                       '2017' = 'Buurt.Pol2017',
@@ -87,16 +89,18 @@ server1 <- function(input, output, session){
     #test2 <- subset(buurten2018, buurten2018$Codering_code %in% names(test3) , select = `_Wijken_en_buurten`)
     test4 <-  names(test3)
     selected_polygon <- subset(Buurt.Pol2018,Buurt.Pol2018@data$buurtcode %in%  test4)
+    selected_polygon2 <- subset(cents,cents@data$buurtcode %in%  test4)
     
     
     
-    #lol <- predicter(fit, c("high", "high", "high", "high"))
-    #lol2 <-  lol[,which(lol  > 0) ]
-    ##lol3 <- subset(buurten2018, buurten2018$Codering_code %in% names(lol2) , select = `_Wijken_en_buurten`)
-    ##lol4 <- as.vector(lol3[1])
-    #lol5 <-  names(lol2)
-    #lol6 <- subset(Buurt.Pol2018,Buurt.Pol2018@data$buurtcode %in%  lol5)
     
+    # lol <- predicter(fit, c("high", "high", "high", "high"))
+    # lol2 <-  lol[,which(lol  > 0) ]
+    # lol3 <- subset(buurten2018, buurten2018$Codering_code %in% names(lol2) , select = `_Wijken_en_buurten`)
+    #  lol4 <- as.vector(lol3[1])
+    #  lol5 <-  names(lol2)
+    #  lol6 <- subset(Buurt.Pol2018,Buurt.Pol2018@data$buurtcode %in%  lol5)
+    #  lol7 <- subset(cents,cents@data$buurtcode %in%  lol5)
     
     
     
@@ -119,7 +123,7 @@ server1 <- function(input, output, session){
                   stroke = FALSE, 
                   smoothFactor = 0.3, 
                   fillOpacity = 1, 
-                  group= "Test",
+                  group= "Data",
                   fillColor = ~pal(log10(tt2)),
                   popup = state_popup,
                   weight = 1 
@@ -138,6 +142,13 @@ server1 <- function(input, output, session){
                    weight = 2 
       ) %>%
       
+      addMarkers( data = selected_polygon2,
+                  layerId= ~`_Wijken_en_buurten`,
+                  lng = selected_polygon2@data$Coord1,
+                  lat = selected_polygon2@data$Coord2,
+                  popup = selected_polygon2@data$`_Wijken_en_buurten`
+      )%>%
+      
       addLegend(
         position = "bottomleft",
         pal = pal, 
@@ -147,7 +158,7 @@ server1 <- function(input, output, session){
         labFormat = labelFormat(transform = function(x) round(10^x))) %>%
       
       addLayersControl(
-        overlayGroups =c("Test", "Lol"),
+        overlayGroups =c("Data", "Voorspelde wijk"),
         options = layersControlOptions(collapsed=FALSE)
       )
     
@@ -235,33 +246,33 @@ server1 <- function(input, output, session){
   })  
   
   
- # output$treepred<-renderText({
- #   test <-   predicter(fit, c(input$Input1, input$Input2 ,input$Input3  , input$Input4))
- #   test3 <-  colnames(test)[,which(test  > 0) ]
-#    test2 <- subset(buurten2018, buurten2018$Codering_code %in% names(test3) , select = `_Wijken_en_buurten`)
-#    test4 <- as.vector(test2[1])
-#    as.character(lol4)
-#    
-    
-    
- #       lol <- predicter(fit, c("high", "high", "high", "high"))
- #       lol2 <-  lol[,which(lol  > 0) ]
- #       lol3 <- subset(buurten2018, buurten2018$Codering_code %in% names(lol2) , select = `_Wijken_en_buurten`)
- #       lol4 <- as.vector(lol3[1])
- #       lol5 <-  names(lol2)
- #       lol6 <- subset(Buurt.Pol2018,Buurt.Pol2018@data$buurtcode %in%  lol5)
-        
-
-        
+  # output$treepred<-renderText({
+  #   test <-   predicter(fit, c(input$Input1, input$Input2 ,input$Input3  , input$Input4))
+  #   test3 <-  colnames(test)[,which(test  > 0) ]
+  #    test2 <- subset(buurten2018, buurten2018$Codering_code %in% names(test3) , select = `_Wijken_en_buurten`)
+  #    test4 <- as.vector(test2[1])
+  #    as.character(lol4)
+  #    
+  
+  
+  #       lol <- predicter(fit, c("high", "high", "high", "high"))
+  #       lol2 <-  lol[,which(lol  > 0) ]
+  #       lol3 <- subset(buurten2018, buurten2018$Codering_code %in% names(lol2) , select = `_Wijken_en_buurten`)
+  #       lol4 <- as.vector(lol3[1])
+  #       lol5 <-  names(lol2)
+  #       lol6 <- subset(Buurt.Pol2018,Buurt.Pol2018@data$buurtcode %in%  lol5)
+  
+  
+  
   #      test <-   predicter(fit, c(input$Input1, input$Input2 ,input$Input3  , input$Input4))
   #      test3 <-  test[,which(test  > 0) ]
   #      #test2 <- subset(buurten2018, buurten2018$Codering_code %in% names(test3) , select = `_Wijken_en_buurten`)
   #      test4 <-  names(test3)
   #      selected_polygon <- subset(Buurt.Pol2018,Buurt.Pol2018@data$buurtcode %in%  test4)
-        
-        
-        
-        
+  
+  
+  
+  
   #})
   
 }

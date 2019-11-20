@@ -99,7 +99,7 @@ FixLength <- function (Vect,Size) {
 }
 
 #geen idee wat dit is maar het doet wat 
-pal <- colorNumeric("viridis", NULL)
+pal <- colorNumeric("viridis", NULL, reverse = TRUE)
 
 #for(i in 7:ncol(b2018)){
 #  test <- mean(b2018[b2018$Soort_regio_omschrijving == 'Buurt' ,i])
@@ -109,3 +109,12 @@ pal <- colorNumeric("viridis", NULL)
 #}
 
 #b2018 <- b2018[b2018$Soort_regio_omschrijving == 'buurt' ,]
+
+# De centroids worden berekend
+centroids <- getSpPPolygonsLabptSlots(Buurt.Pol2018)
+## In cents worden de midelpunten van de polygonen opgeslagen. Deze worden gebruikt om een marker te kunnen plotten
+cents <- SpatialPointsDataFrame(coords=centroids, data=Buurt.Pol2018@data, proj4string=CRS("+proj=longlat +ellps=clrk66"))
+# De coordinaten worden uit de polygonenopslage gekoppieerd naar het dataframe.
+cents@data$Coord1 <-cents@coords[,1]
+cents@data$Coord2 <-cents@coords[,2]
+
