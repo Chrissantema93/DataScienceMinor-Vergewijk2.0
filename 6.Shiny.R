@@ -26,9 +26,9 @@ ui1 <- fluidPage(
     mainPanel(        
       tabsetPanel(id = "Test",          
                   tabPanel("3D Plot",
-                           selectInput("Var", "Welke wilt u", names(Buurt.Pol2018@data), selected=""),
+                           selectInput("Var", "Welke feature wilt u bekijken?", names(Buurt.Pol2018@data), selected=""),
                            leafletOutput("vancouver.map", width="80%",height="400px"),
-                           selectInput("Business", "Wat is er gekozen", Buurt.Pol2018$buurtnaam, selected="")
+                           selectInput("Business", "Welke wijk is er gekozen", Buurt.Pol2018$buurtnaam, selected="Stadsdriehoek")
                   ),          
                   tabPanel("Contour Graph",
                            tableOutput("data")
@@ -147,7 +147,7 @@ server1 <- function(input, output, session){
                   layerId= ~`_Wijken_en_buurten`,
                   lng = selected_polygon2@data$Coord1,
                   lat = selected_polygon2@data$Coord2,
-                  popup = selected_polygon2@data$`_Wijken_en_buurten`
+                  popup = state_popup
       )%>%
       
       addLegend(
@@ -243,7 +243,10 @@ server1 <- function(input, output, session){
   }) 
   
   output$Tijdlijn <- renderPlot({
-    plot(Tijdlijn()$Jaar_, Tijdlijn()[,input$Var], type = 'l')
+    ggplot(data=Tijdlijn(), aes(x=Jaar_, y= !!as.symbol(input$Var))) + geom_line(color="blue") + geom_point() +
+      geom_text(aes(label=!!as.symbol(input$Var), vjust= -1)) + 
+      ggtitle(paste("Verloop van feature", as.symbol(input$Var), "over de jaren")) +
+      labs(x = "Jaren")
   })  
   
   
@@ -278,4 +281,4 @@ server1 <- function(input, output, session){
   
 }
 
-shinyApp(ui = ui1, server = server1)        
+shinyApp(ui = ui1, server = server1)      
