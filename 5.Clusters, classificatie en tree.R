@@ -31,11 +31,11 @@ descision.test$Dichtheid_Bevolking <- rowMeans(select(descision.test,"Bevolkings
 descision.test$Parkeergelegenheid  <- rowMeans(select(descision.test,"Motortweewielers_aantal", "Personenauto's_totaal_aantal", "Personenauto's;_6_jaar_en_ouder_aantal", "Personenauto's;_jonger_dan_6_jaar_aantal"))
 descision.test$mean_Woning_grootte <- rowMeans(select(descision.test,"Hoekwoning_m3", "Hoekwoning_m3", "Huurwoning_m3", "Koopwoning_m3", "Tussenwoning_m3", "Vrijstaande_woning_m3", "Appartement_m3"))
 descision.test$Woning_grootte      <- rowMeans(select(descision.test,"mean_Woning_grootte", "Gemiddelde_woningwaarde_x_1_000_euro", "Bouwjaar_voor_2000_%"))
+descision.test$Inkomen             <- rowMeans(descision.test[,c("Gemiddeld_inkomen_per_inwoners_x_1_000_euro", "20%_personen_met_hoogste_inkomen_%", "Gemiddelde_woningwaarde_x_1_000_euro", "20%_huishoudens_met_hoogste_inkomen_%")] )
 
-#Deze regel werkte niet <- Deze eventueel later weer toevoegen.
-#descision.test$Inkomen <- rowMeans(descision.test[,c("Gemiddeld_inkomen_per_inwoners.x_1_000_euro", "20%_personen_met_hoogste_inkomen%", "Gemiddelde_woningwaarde_x_1_000_euro", "20%huishoudens_met_hoogste_inkomen%")] ) 
+
 #Nieuwe kolommen in een andere set plaatsen
-Test.set <- descision.test %>% select( Codering_code, Jaar_ , Cultuur_recreatie, Dichtheid_Bevolking, Parkeergelegenheid, Woning_grootte) 
+Test.set <- descision.test %>% select( Codering_code, Jaar_ , Cultuur_recreatie, Dichtheid_Bevolking, Parkeergelegenheid, Woning_grootte, Inkomen) 
 
 #####################################
 #Density plots van de data

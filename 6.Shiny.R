@@ -13,6 +13,7 @@ ui1 <- fluidPage(
       sliderTextInput(inputId = 'Input2', label = 'Dichtheid bevolking: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
       sliderTextInput(inputId = 'Input3', label = 'Parkeergelegenheid: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
       sliderTextInput(inputId = 'Input4', label = 'Woninggrootte: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
+      sliderTextInput(inputId = 'Input5', label = 'Inkomen: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
       # textOutput("treepred"),
       selectInput(inputId = "Jaartal", "Uit welk jaar wilt u de gegevens zien?", choices = 
                     c('2018' = 'Buurt.Pol2018',
@@ -84,7 +85,7 @@ server1 <- function(input, output, session){
   output$vancouver.map <- renderLeaflet({
     Chosen_var <- inputx()@data[,input$Var][which(inputx()@data$Soort_regio_omschrijving == "Buurt")]
     tt2 <- FixLength(Chosen_var, 78) + 1
-    test <-   predicter(fit, c(input$Input1, input$Input2 ,input$Input3  , input$Input4))
+    test <-   predicter(fit, c(input$Input1, input$Input2 ,input$Input3  , input$Input4, input$Input5))
     test3 <-  test[,which(test  > 0) ]
     #test2 <- subset(buurten2018, buurten2018$Codering_code %in% names(test3) , select = `_Wijken_en_buurten`)
     test4 <-  names(test3)
