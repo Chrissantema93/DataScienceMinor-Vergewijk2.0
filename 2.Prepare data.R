@@ -1,3 +1,8 @@
+#####################################
+# VergeWijk © 2019
+# 2.Prepare Data.R
+#####################################
+
 PrepareData <- function(PATH) {
   #' @param PATH De plek waar de csv bestanden staan
   

@@ -1,3 +1,7 @@
+#####################################
+# VergeWijk © 2019
+# 6.Shiny.R
+#####################################
 
 ui1 <- fluidPage(
   titlePanel("Vergewijk 'Welke wijk is geschikt voor mij?'."),

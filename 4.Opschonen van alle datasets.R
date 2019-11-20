@@ -1,7 +1,7 @@
-# Voordat dit script gerund kan worden moeten eerst de volgende scripts gerund worden:
-# - Prepare data.R        ## Functie om het dataset van het CBS in te laden
-# - MergeGemeenteJaar. R  ## Functie om de data van Rotterdam in te laden, en te mergen met CBS data
-
+#####################################
+# VergeWijk © 2019
+# 4. Opschonen van alle datasets.R
+#####################################
 
 # De functie stopt in Allsets (Large list) vijf lijsten met voor ieder jaar de CBS data.
 allsets <- PrepareData("Data/Cbs/")
@@ -14,7 +14,7 @@ buurten2017 <- allsets[[4]]
 buurten2018 <- allsets[[5]]
 
 #Alle CBS data wordt onder elkaar gezet (in een data.frame)
-bind_rows(buurten2018, buurten2017, buurten2016, buurten2015, buurten2014) -> btotaal  
+btotaal <- bind_rows(buurten2018, buurten2017, buurten2016, buurten2015, buurten2014)  
 
 g2014 <- MergeGemeenteJaar("Data/Gemeente/",2014)
 g2016 <- MergeGemeenteJaar("Data/Gemeente/",2016)
@@ -31,28 +31,20 @@ rm(list = c("g2018", "g2016", "g2014"))
 ## Alle kolommen namen uit buurten2014 wegschrijven naar k.naam 
 k.naam <- colnames(buurten2014)
 
-# 
-  for(j in 1:108){
-    if(j >= 9 & j<= 24){ 
-      k.naam[j] <- gsub("\\_%", "_aantal", x = colnames(buurten2014[j]))
-        }
+for(j in 1:108) {
+  if (j >= 9 & j <= 24) {
+    k.naam[j] <- gsub("\\_%", "_aantal", x = colnames(buurten2014[j]))
+  }
   else{
     k.naam[j] <- colnames(buurten2014[j])
-    }
   }
-
+}
 
 colnames(buurten2014) <- k.naam
 
 #bind_rows(buurten2018, buurten2017, buurten2016, buurten2015, buurten2014) -> btotaal  
 
-
-
-
-#install.packages("geojsonio")
-#library("geojsonio")
 poly.g <- geojsonio::geojson_read("Data/Polygons/Rotterdam Wijken_2.geojson", what = "sp")
-
 
 #filter alle wijken uit de dataset
 buurten2018 <- buurten2018[which(buurten2018$Soort_regio_omschrijving == "Buurt"), ]
@@ -79,17 +71,14 @@ rownames(buurten2018) <- make.unique(buurten2018[,2])
 #rm(list = c("buurten2018", "buurten2017", "buurten2016", "buurten2015", "buurten2014"))
 #rm(list = c("BuurtEnPoly2018", "BuurtEnPoly2017", "BuurtEnPoly2016", "BuurtEnPoly2015", "BuurtEnPoly2014"))
 
-
 #Zit nu in Shiny
 #lijst met inwoners van alleen de buurten (wijken zijn eruit gefilterd)
 #InwonersPerWijk <- states@data$Aantal_inwoners_aantal[which(states@data$Soort_regio_omschrijving == "Buurt")]
-
 
 #als eerst vul ik de lijst op met ??n 0, omdat de lijst 93 lang moet zijn en niet 92
 #dan doe ik alles + 1 omdat de helekaart grijs wordt als er ??n 0 in de vector zit
 #daarna alles X50 zodat het wat beter schaalt, de kleuren gaan van 10 tot 1.000.000 en de normale
 #waardes zitten tussen de 0 en ~20.000 ofzo dus dan heb je weinig kleurverschil
-
 
 FixLength <- function (Vect,Size) {
   #gebruik: vult de vector op tot de gewenste lengte.
@@ -111,7 +100,6 @@ FixLength <- function (Vect,Size) {
 
 #geen idee wat dit is maar het doet wat 
 pal <- colorNumeric("viridis", NULL)
-
 
 #for(i in 7:ncol(b2018)){
 #  test <- mean(b2018[b2018$Soort_regio_omschrijving == 'Buurt' ,i])

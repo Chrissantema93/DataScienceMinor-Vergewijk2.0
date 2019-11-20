@@ -1,4 +1,12 @@
 #####################################
+# VergeWijk © 2019
+# 1.Import.R
+#####################################
+
+#Alles in environment verwijderen
+remove(list = ls())
+
+#####################################
 #Hulp functies
 #####################################
 detachAllPkgs <- function() {
@@ -33,5 +41,7 @@ InstallAndLoadPkgs(c("shiny"       , # Om de data te presenteren
                      "tidyverse"   , # Een pakket met van alles
                      "gridExtra"   , # Hiermee zet je plotjes netjes naast elkaar
                      "partykit"    , # Gebruiken we deze nog?
-                     "sp"            # ???
+                     "sp"          , # ???
+                     "geojsonio"
                      ))
+
