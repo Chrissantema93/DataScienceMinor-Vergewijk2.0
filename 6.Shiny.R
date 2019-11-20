@@ -9,10 +9,10 @@ ui1 <- fluidPage(
   titlePanel("Vergewijk 'Welke wijk is geschikt voor mij?'."),
   sidebarLayout(
     sidebarPanel(
-      sliderTextInput(inputId = 'Input1', label = 'Cultuur & recreatie: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-      sliderTextInput(inputId = 'Input2', label = 'Dichtheid bevolking: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-      sliderTextInput(inputId = 'Input3', label = 'Parkeergelegenheid: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-      sliderTextInput(inputId = 'Input4', label = 'Woninggrootte: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+      sliderTextInput(inputId = 'Input1', label = 'Cultuur & recreatie: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
+      sliderTextInput(inputId = 'Input2', label = 'Dichtheid bevolking: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
+      sliderTextInput(inputId = 'Input3', label = 'Parkeergelegenheid: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
+      sliderTextInput(inputId = 'Input4', label = 'Woninggrootte: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
       # textOutput("treepred"),
       selectInput(inputId = "Jaartal", "Uit welk jaar wilt u de gegevens zien?", choices = 
                     c('2018' = 'Buurt.Pol2018',
