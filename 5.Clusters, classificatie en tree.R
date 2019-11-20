@@ -60,18 +60,26 @@ curateDataSet <- function(dataset) {
   curateColumn <- function(col) {
     cSd <- sd(col)
     cMean <- mean(col)
+    high_p <- qnorm(0.8, mean = cMean, sd= cSd)
+    high <- qnorm(0.65, mean = cMean, sd= cSd)
+    low  <- qnorm(0.4, mean = cMean, sd= cSd)
+    low_m  <- qnorm(0.2, mean = cMean, sd= cSd)
     
-    high <- qnorm(0.7, mean = cMean, sd= cSd)
-    low  <- qnorm(0.3, mean = cMean, sd= cSd)
     curateValue <- function(value){
-      if(value <= low){
+      if(value <= low_m){
+        return("low_m")
+      }
+      else if((value > low_m) && (value < low)){
         return("low")
       }
       else if((value > low) && (value < high)){
         return("mid")
       }
-      else{
+      else if((value > high) && (value < high_p)){
         return("high")
+      }
+      else{
+        return("high_p")
       }
     }
     
