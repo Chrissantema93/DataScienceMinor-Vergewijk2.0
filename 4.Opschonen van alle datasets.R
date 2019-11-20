@@ -14,7 +14,7 @@ buurten2017 <- allsets[[4]]
 buurten2018 <- allsets[[5]]
 
 #Alle CBS data wordt onder elkaar gezet (in een data.frame)
-btotaal <- bind_rows(buurten2018, buurten2017, buurten2016, buurten2015, buurten2014)  
+btotaal <- dplyr::bind_rows(buurten2018, buurten2017, buurten2016, buurten2015, buurten2014)  
 
 g2014 <- MergeGemeenteJaar("Data/Gemeente/",2014)
 g2016 <- MergeGemeenteJaar("Data/Gemeente/",2016)

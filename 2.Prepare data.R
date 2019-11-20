@@ -10,7 +10,7 @@ PrepareData <- function(PATH) {
   
   for (i in 1:5) {
     #inladen vd de sets
-    datalist[[i]] <- read.csv(file = paste(PATH, "Kerncijfers_wijken_en_buurten_20",i+13,".csv", sep = ""), sep= ";", stringsAsFactors = FALSE, dec=",", check.names=FALSE)
+    datalist[[i]] <- read.csv(file = paste(PATH, "Kerncijfers_wijken_en_buurten_20",i+13,".csv", sep = ""), sep= ";", stringsAsFactors = FALSE, dec=",", check.names=FALSE, encoding="UTF-8")
     
     # de rijen 3 en 4 aan elkaar knopen
     datalist[[i]][1,] <- paste (datalist[[i]][3,] , datalist[[i]][4,], sep = " ")

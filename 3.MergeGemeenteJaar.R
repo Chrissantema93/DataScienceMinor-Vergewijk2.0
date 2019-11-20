@@ -6,10 +6,10 @@
 MergeGemeenteJaar <- function(PATH,year) {
   
   # ophalen alle categorien van dit jaar  
-  g_obj <- read.csv(file = paste(PATH, "gemeente ",year," fi_obj.csv", sep="")  , sep = ';',stringsAsFactors = FALSE)
-  g_sub <- read.csv(file = paste(PATH, "gemeente ",year," fi_subj.csv", sep="") , sep = ';',stringsAsFactors = FALSE)
-  g_si  <- read.csv(file = paste(PATH, "gemeente ",year," si.csv", sep="") , sep = ';',stringsAsFactors = FALSE)
-  g_fi  <- read.csv(file = paste(PATH, "gemeente ",year," vi.csv", sep="") , sep = ';',stringsAsFactors = FALSE)
+  g_obj <- read.csv(file = paste(PATH, "gemeente ",year," fi_obj.csv", sep="")  , sep = ';',stringsAsFactors = FALSE, encoding = "UTF-8")
+  g_sub <- read.csv(file = paste(PATH, "gemeente ",year," fi_subj.csv", sep="") , sep = ';',stringsAsFactors = FALSE, encoding="UTF-8")
+  g_si  <- read.csv(file = paste(PATH, "gemeente ",year," si.csv", sep="") , sep = ';',stringsAsFactors = FALSE, encoding="UTF-8")
+  g_fi  <- read.csv(file = paste(PATH, "gemeente ",year," vi.csv", sep="") , sep = ';',stringsAsFactors = FALSE, encoding="UTF-8")
   
   # colnames uniekmaken omdat er veel dezelfde tussen zitten
   colnames(g_obj) <- paste("Obj", colnames(g_obj), sep = "_")
@@ -68,7 +68,7 @@ MergeGemeenteJaar <- function(PATH,year) {
   merged_g <- merged_g[-which(merged_g$Sub_BUURT %in% c("Groot IJsselmonde-Noord","Groot IJsselmonde-Zuid")),]
   
   #ijsselmond (merged) terug zetten
-  merged_g <- bind_rows(merged_g, ijselbuurten[1,])
+  merged_g <- dplyr::bind_rows(merged_g, ijselbuurten[1,])
   
   #haal alle te dupliceren wijken op
   rowsToDup <- merged_g[which(grepl("/",merged_g$Sub_BUURT)),]
@@ -102,7 +102,7 @@ MergeGemeenteJaar <- function(PATH,year) {
       temprow[1,"Sub_BUURT"] <- name
       
       #gooi de rij terug in een dataframe
-      duplicatedRows <- bind_rows(duplicatedRows,temprow)
+      duplicatedRows <- dplyr::bind_rows(duplicatedRows,temprow)
       
     }
   }
@@ -111,7 +111,7 @@ MergeGemeenteJaar <- function(PATH,year) {
   merged_g <- merged_g[-which(merged_g$Sub_BUURT %in% rowsToDup$Sub_BUURT),]
   
   #verdubbelde rijen terug erin gooien met nieuwe juiste namen
-  merged_g <- bind_rows(merged_g, duplicatedRows)
+  merged_g <- dplyr::bind_rows(merged_g, duplicatedRows)
   
   #toevoegen van de buurt codes om later te kunnen linkeden met cbs data
   #lege column toevoegen waar de waardes in komen

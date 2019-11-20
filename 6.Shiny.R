@@ -2,6 +2,36 @@
 # VergeWijk © 2019
 # 6.Shiny.R
 #####################################
+source("2.Prepare data.R")
+source("3.MergeGemeenteJaar.R")
+source("4.Opschonen van alle datasets.R")
+source("5.Clusters, classificatie en tree.R")
+
+install.packages("shiny")
+install.packages("shinyWidgets")
+install.packages("leaflet")     
+install.packages("dplyr")       
+install.packages("data.table")  
+install.packages("rpart")
+install.packages("maptree")
+install.packages("tidyverse"   )
+install.packages("gridExtra"   )
+install.packages("partykit"    )
+install.packages("sp"          )
+install.packages("geojsonio")
+
+library(shiny)
+library(shinyWidgets)
+library(leaflet)
+library(dplyr)
+library(data.table)
+library(rpart)
+library(maptree)
+library(tidyverse)
+library(gridExtra)
+library(partykit)
+library(sp)
+
 
 
 
@@ -26,9 +56,9 @@ ui1 <- fluidPage(
     mainPanel(        
       tabsetPanel(id = "Test",          
                   tabPanel("3D Plot",
-                           selectInput("Var", "Welke wilt u", names(Buurt.Pol2018@data), selected=""),
+                           selectInput("Var", "Welke feature wilt u bekijken?", names(Buurt.Pol2018@data), selected=""),
                            leafletOutput("vancouver.map", width="80%",height="400px"),
-                           selectInput("Business", "Wat is er gekozen", Buurt.Pol2018$buurtnaam, selected="")
+                           selectInput("Business", "Welke wijk is er gekozen", Buurt.Pol2018$buurtnaam, selected="Stadsdriehoek")
                   ),          
                   tabPanel("Contour Graph",
                            tableOutput("data")
@@ -147,7 +177,7 @@ server1 <- function(input, output, session){
                   layerId= ~`_Wijken_en_buurten`,
                   lng = selected_polygon2@data$Coord1,
                   lat = selected_polygon2@data$Coord2,
-                  popup = selected_polygon2@data$`_Wijken_en_buurten`
+                  popup = state_popup
       )%>%
       
       addLegend(
@@ -243,7 +273,10 @@ server1 <- function(input, output, session){
   }) 
   
   output$Tijdlijn <- renderPlot({
-    plot(Tijdlijn()$Jaar_, Tijdlijn()[,input$Var], type = 'l')
+      ggplot(data=Tijdlijn(), aes(x=Jaar_, y= !!as.symbol(input$Var))) + geom_line(color="blue") + geom_point() +
+      geom_text(aes(label=!!as.symbol(input$Var), vjust= -1)) + 
+        ggtitle(paste("Verloop van feature", as.symbol(input$Var), "over de jaren")) +
+        labs(x = "Jaren")
   })  
   
   
