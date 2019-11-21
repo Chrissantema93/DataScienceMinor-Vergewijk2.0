@@ -125,8 +125,12 @@ yFeat <- colnames(Test.set)[-c(1,2)]
 target <- CreateDicisionForumla(xTarg, yFeat)
 
 
-fit <- rpart(target, data = train, method = "class", cp = 0.000001)
-draw.tree(fit, print.levels = TRUE)
+fit <- rpart::rpart(target, data = train, method = "class")
+
+rpart.plot::prp(fit, yesno = TRUE, nn = TRUE ,
+                 legend.y = FALSE, 
+                faclen = 0, varlen=0, 
+                cex = 0.7)
 
 
 predicter <- function(tree, prediction){
@@ -142,5 +146,46 @@ predicter <- function(tree, prediction){
   print(predict(tree, res ,type="prob", na.action = "na.exclude"))
 }
 
-# predicter(fit, c("high", "high", "high", "high")) 
-# ff <- predict(fit, train_test, type="prob")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#randomforest
+trans <- train
+trans[] <- lapply(train, factor)
+
+caret::confusionMatrix(data = predict(fit, type = "class"), reference = )
+randomFit <- randomForest(as.formula(target), trans, ntree=1500,mtry=5)
+randomFit
+# heeft een error rate van 76.15%... veel te hoog. Eventueel oplossen met meer features.
+#validation/pruning
+
+crossValidate <- function(tree, formula, traindata, reference, lowcp){
+  confusion <- caret::confusionMatrix(data = predict(tree, type = "class"), reference = reference)
+  if(confusion$overall["Accuracy"] == 1) {
+    return(tree)
+  }
+  
+  
+  lowcpTree <- rpart::rpart(formula, traindata, method = "class", cp = lowcp, model = TRUE)
+  lowestXerrorI <- which.min(lowcpTree$cptable[, "xerror"])
+  bestcp <- round(lowcpTree$cptable[lowestXerrorI, "CP"],4)
+  return(rpart::prune(lowcpTree, cp = bestcp))
+}
+
+newtree <- crossValidate(fit, target, trans, trans$Codering_code, 0.000000001)
+#accuray is met 0.03 verhoogt... woehoe.
+
+rpart::printcp(newtree)
+#Nog even onderzoeken hoe de accuracy van beide tree kan worden verbeterd. Dit schiet niet op zo nml.
+
