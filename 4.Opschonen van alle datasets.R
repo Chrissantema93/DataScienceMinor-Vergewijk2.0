@@ -48,6 +48,12 @@ btotaal2 <- bind_rows(buurten2018, buurten2017, buurten2016, buurten2015, buurte
 ##
 
 
+buurten2014 <- allsets[[1]]
+buurten2015 <- allsets[[2]]
+buurten2016 <- allsets[[3]]
+buurten2017 <- allsets[[4]]
+buurten2018 <- allsets[[5]]
+
 
 buurten2014 <- merge(x = buurten2014, y = g2014, by = "Codering_code")
 buurten2016 <- merge(x = buurten2016, y = g2016, by = "Codering_code")
