@@ -13,20 +13,6 @@ buurten2016 <- allsets[[3]]
 buurten2017 <- allsets[[4]]
 buurten2018 <- allsets[[5]]
 
-#Alle CBS data wordt onder elkaar gezet (in een data.frame)
-btotaal <- bind_rows(buurten2018, buurten2017, buurten2016, buurten2015, buurten2014)  
-
-g2014 <- MergeGemeenteJaar("Data/Gemeente/",2014)
-g2016 <- MergeGemeenteJaar("Data/Gemeente/",2016)
-g2018 <- MergeGemeenteJaar("Data/Gemeente/",2018)
-
-buurten2014 <- merge(x = buurten2014, y = g2014, by = "Codering_code")
-buurten2016 <- merge(x = buurten2016, y = g2016, by = "Codering_code")
-buurten2018 <- merge(x = buurten2018, y = g2018, by = "Codering_code")
-buurten2015 <- buurten2017[which(buurten2018$Codering_code %in% buurten2018$Codering_code), ]
-buurten2017 <- buurten2017[which(buurten2018$Codering_code %in% buurten2018$Codering_code), ]
-
-rm(list = c("g2018", "g2016", "g2014"))
 
 ## Alle kolommen namen uit buurten2014 wegschrijven naar k.naam 
 k.naam <- colnames(buurten2014)
@@ -41,6 +27,41 @@ for(j in 1:108) {
 }
 
 colnames(buurten2014) <- k.naam
+
+#Alle CBS data wordt onder elkaar gezet (in een data.frame)
+#btotaal <- bind_rows(buurten2018, buurten2017, buurten2016, buurten2015, buurten2014)  
+
+g2014 <- MergeGemeenteJaar("Data/Gemeente/",2014)
+g2016 <- MergeGemeenteJaar("Data/Gemeente/",2016)
+g2018 <- MergeGemeenteJaar("Data/Gemeente/",2018)
+
+
+## DIT IS TIJDELIJKE CODE OM DE DESCISION TREE WERKEND TE HOUDEN
+buurten2018 <- merge(x = buurten2018, y = g2018, by = "Codering_code")
+buurten2015 <- buurten2015[which(buurten2018$Codering_code %in% buurten2018$Codering_code), ]
+buurten2016 <- buurten2016[which(buurten2018$Codering_code %in% buurten2018$Codering_code), ]
+buurten2017 <- buurten2017[which(buurten2018$Codering_code %in% buurten2018$Codering_code), ]
+buurten2014 <- buurten2014[which(buurten2018$Codering_code %in% buurten2018$Codering_code), ]
+buurten2018 <- allsets[[5]]
+buurten2018 <- buurten2018[which(buurten2014$Codering_code %in% buurten2014$Codering_code), ]
+btotaal2 <- bind_rows(buurten2018, buurten2017, buurten2016, buurten2015, buurten2014)  
+##
+
+
+
+buurten2014 <- merge(x = buurten2014, y = g2014, by = "Codering_code")
+buurten2016 <- merge(x = buurten2016, y = g2016, by = "Codering_code")
+buurten2018 <- merge(x = buurten2018, y = g2018, by = "Codering_code")
+buurten2015 <- buurten2015[which(buurten2015$Codering_code %in% buurten2018$Codering_code), ]
+buurten2017 <- buurten2017[which(buurten2017$Codering_code %in% buurten2018$Codering_code), ]
+
+buurten2016$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`<- as.numeric(buurten2016$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`)
+buurten2018$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`<- as.numeric(buurten2018$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`)
+
+btotaal <- bind_rows(buurten2018, buurten2017, buurten2016, buurten2015, buurten2014)  
+rm(list = c("g2018", "g2016", "g2014"))
+
+
 
 #bind_rows(buurten2018, buurten2017, buurten2016, buurten2015, buurten2014) -> btotaal  
 

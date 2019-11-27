@@ -6,7 +6,7 @@
 #####################################
 #Prepareren van de data voor tree
 #####################################
-descision.test <- btotaal[btotaal$Soort_regio_omschrijving == 'Buurt' ,]
+descision.test <- btotaal2[btotaal2$Soort_regio_omschrijving == 'Buurt' ,]
 descision.test <- descision.test[which(descision.test$Codering_code %in% buurten2018$Codering_code), ]
 descision.test[is.na(descision.test)] <- 0 ##!!!! <- Iets anders voor verzinnen. Zomaar een 0 plaatsen heeft grote invloed op de uitkomst.
 
