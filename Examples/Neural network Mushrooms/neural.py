@@ -8,9 +8,12 @@ Created on Tue Dec  3 11:45:48 2019
 #conda install ipython pillow tensorflow keras pandas matplotlib scikit-learn seaborn graphviz pydot
 
 import pandas as pd
-from pandas import DataFrame
-from keras.models import Sequential
-from keras.layers import Dense
+import numpy as np
+
+from sklearn.model_selection import train_test_split
+from pandas                  import DataFrame
+from keras.models            import Sequential
+from keras.layers            import Dense
 
 datapath = "data/mushrooms.csv"
 shrooms = pd.read_csv(datapath)
@@ -65,6 +68,8 @@ for col in X.columns:
     X[col] = translator.TranslateListForward(col, X[col])
 
 
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33, random_state=42)
+
 #initializeert het model
 model = Sequential() 
 
@@ -88,12 +93,12 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']
 #Epoch: een trainings ronde
 #batch_size: Een hoeveelheid rows die tijdens 1 epoch worden verwerkt. Dat wil zeggen: 
 #Dus: Hoe meer epochs, hoe meer je model traint. Hoe grote de batch size, hoe meer er tijdens 1 epoch behandeld word.
-model.fit(X,Y,epochs=150, batch_size=10)
+model.fit(X_train,Y_train,epochs=150, batch_size=10)
 
-_, accuracy = model.evaluate(X, Y)
+_, accuracy = model.evaluate(X_test, Y_test)
 print('Accuracy: %.2f' % (accuracy*100))
 
-
+predictions = model.predict(X_test)
 #TODO:
 # - Wat doet de parameter van Dense - units überhaupt?
 # - Correct bepalen van epochs en batch size
