@@ -17,8 +17,36 @@ from pandas                  import DataFrame
 from keras.models            import Sequential
 from keras.layers            import Dense
 
+from keras import backend
+
+from keras.wrappers.scikit_learn import KerasClassifier
+
+from sklearn.preprocessing import LabelEncoder
+from keras.utils import np_utils
+
+
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import KFold
+
+
+
+from tensorflow.python.client import device_lib
+print(device_lib.list_local_devices())
+
+
+#Nog leuker: gebruik conda install tensorflow-gpu
+
 datapath = "Data/KnnMergedData_3.csv"
-dataf = pd.read_csv(datapath, encoding = 'ISO-8859-1', sep=";")
+
+def replacecommas(x):
+    if(type(x) is str):
+        return x.replace(',','.')
+    else:
+        return x
+
+
+dataf = pd.read_csv(datapath, encoding = 'ISO-8859-1', sep=";").applymap(replacecommas)
+dataf.drop(dataf.columns[0:4],axis=1,inplace=True)
 
 #shrooms = pd.read_csv(datapath)
 
@@ -64,84 +92,66 @@ class ClassifierTranslator:
 ##print(translator.TranslateListBackward("class", [0,1,2]))
 ##print(translator.TranslateListForward("class", ["p","e","p"]))
 
-#NOTE: Als er 2 _ voor een attribuut naam staan in een python class
-# dan is het vaak ten zeerste aangeraden om niks met dit attribuut te doen.
-# Het word dan als private field/attribuut gezien worden net als in talen als
-# C++ , C#, Java.
 
-class NeuralNetwork:
-    
-    def __init__(self, 
-                 df: DataFrame, 
-                 epochs: int,
-                 batch_size: int,
-                 yColName: str):
+translator = ClassifierTranslator(dataf)
 
-        dataset = df
-        self.translator = ClassifierTranslator(dataset)
-        
-        ### Omzetten van alle 'categorische' waarden naar getallen.
-        X = dataset.drop(yColName, axis = 1)
-        Y = DataFrame(self.translator.TranslateListForward(colname = yColName,
-                                                           l = dataset[yColName]))
-        
-        
-        for col in X.columns:
-            X[col] = self.translator.TranslateListForward(colname = col, 
-                                                          l = X[col])
-        
-        self.__X_train, \
-        self.__X_test, \
-        self.__Y_train, \
-        self.__Y_test = train_test_split(X, Y, test_size=0.33, random_state=42)
-        
-        ##Hoeveelheid features in X (22)
-        classN = len(X.columns)
-        
-        ##initializeert het model
-        self.model = Sequential()
-        
+yColName = "Inkomen"
 
-        self.model.add(Dense(classN * 8, 
-                             input_dim = classN, 
-                             activation='relu'))
-        
-        ##Tweede hidden laag
-        self.model.add(Dense(classN * 4, 
-                             activation ='relu'))
-        
-        ##Laatste sigmoid laag
-        self.model.add(Dense(1, 
-                             activation='softmax'))
-        
-        
-        self.model.compile(loss = 'binary_crossentropy',
-                           optimizer = 'adam',
-                           metrics = ['accuracy'])
-        
-    
-        self.model.fit(self.__X_train,
-                       self.__Y_train,
-                       epochs=epochs, 
-                       batch_size=batch_size)
-        
-        _, self.accuracy = self.model.evaluate(self.__X_test, self.__Y_test)
-        print('Accuracy: %.2f' % (self.accuracy*100))
-        
-    def Predict(self, data: DataFrame):
-        return self.model.predict(data)
+X = dataf.drop(yColName, axis = 1)
+Y = dataf[yColName]
 
-network = NeuralNetwork(df = dataf, 
-                        epochs = 150, 
-                        batch_size = 10, 
-                        yColName = "Cultuur_recreatie")
+classN = len(X.columns)
 
-##Fitten van het model
-##Epochs: een trainings ronde
-##batch_size: hoeveel rows er tijdens 1 epoch iteratief worden verwerkt tot het
-## het einde van de data is bereikt.
+        
+# Floats voor X kunnen blijkbaar gewoon als intput worden gebruikt en hoeven dus niet te worden vertaqld naar levels. Echter kan dit weer niet met de clusters die de mid low high waarden hebben.
+# clusters moeten dus wel worden omgezet.
+# =============================================================================
+for col in X.columns[classN-4:classN]:
+    X[col] = translator.TranslateListForward(colname = col, l = X[col])
+# =============================================================================
 
-#TODO:
-# - Wat doet de parameter van Dense - units überhaupt?
-# - Correct bepalen van epochs en batch size
+X_train, \
+X_test, \
+Y_train, \
+Y_test = train_test_split(X, Y, test_size=0.33, random_state=42)
+
+def baseline_model():
+    model = Sequential()
+    model.add(Dense(18, input_dim=classN, activation='relu'))
+    model.add(Dense(9, activation='relu'))
+    model.add(Dense(3,  activation='softmax')) #Attentie! het aantal units moet hier het aantal classen matchen, dus 3 in geval van low mid high
+    model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['accuracy'])
+    return model
+
+encoder_train = LabelEncoder()
+encoder_train.fit(Y_train)
+encoded_Y_train = encoder_train.transform(Y_train)
+dummy_y_train = np_utils.to_categorical(encoded_Y_train)
+
+encoder_test = LabelEncoder()
+encoder_test.fit(Y_test)
+encoded_Y_test = encoder_test.transform(Y_test)
+dummy_y_test = np_utils.to_categorical(encoded_Y_test)
+
+model = baseline_model()
+
+model.fit(x = X_train, y = dummy_y_train , epochs=200, batch_size=25)
+_, accuracy = model.evaluate(X_test, dummy_y_test)
+print('Accuracy: %.2f' % (accuracy*100))
+# =============================================================================
+# estimator = KerasClassifier(build_fn=baseline_model, epochs=200, batch_size=5, verbose=0)
+# kfold = KFold(n_splits=10, shuffle=True)
+# results = cross_val_score(estimator = estimator, X = X, y = dummy_y, cv = kfold)
+# =============================================================================
+# =============================================================================
+# print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
+# =============================================================================
+
+# =============================================================================
+# model.fit(X_train, Y_train, epochs=150, batch_size=10)
+# 
+# 
+# _ , accuracy = model.evaluate(X_test, Y_test)
+# print('Accuracy: %.2f' % (accuracy*100))
+# =============================================================================
 
