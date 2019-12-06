@@ -19,7 +19,6 @@ from keras.layers            import Dense
 
 datapath = "Data/KnnMergedData_3.csv"
 dataf = pd.read_csv(datapath, encoding = 'ISO-8859-1', sep=";")
-dataf = dataf[["Cultuur_recreatie",  "Dichtheid_Bevolking", "Parkeergelegenheid", "Woning_grootte", "Inkomen"]]
 
 #shrooms = pd.read_csv(datapath)
 
@@ -102,9 +101,7 @@ class NeuralNetwork:
         ##initializeert het model
         self.model = Sequential()
         
-        ## Eerste 'hidden' laag met 22 features. In een voorbeeld zag ik 
-        ## dat de (hoeveelheid features * 8) de parameter units moest zijn, al kon ik
-        ## niet echt teruglezen waarom.
+
         self.model.add(Dense(classN * 8, 
                              input_dim = classN, 
                              activation='relu'))
@@ -128,7 +125,7 @@ class NeuralNetwork:
                        epochs=epochs, 
                        batch_size=batch_size)
         
-        _, self.accuracy = self.model.evaluate(self.__X_train, self.__Y_train)
+        _, self.accuracy = self.model.evaluate(self.__X_test, self.__Y_test)
         print('Accuracy: %.2f' % (self.accuracy*100))
         
     def Predict(self, data: DataFrame):
