@@ -87,7 +87,7 @@ anyNA(knnOutput)
 
 FinalResult <- bind_cols(Code.Naam,knnOutput)
 
-write.csv(FinalResult, file = "Data/KnnMergedData.csv", sep = ";")
+write.csv2(FinalResult, file = "Data/KnnMergedData.csv", sep = ";", row.names = FALSE)
 
 
 ###################

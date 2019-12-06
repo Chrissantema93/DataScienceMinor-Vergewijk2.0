@@ -108,7 +108,7 @@ buurten2016$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`<- as.num
 buurten2018$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`<- as.numeric(buurten2018$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`)
 
 btotaal <- bind_rows(buurten2018, buurten2017, buurten2016, buurten2015, buurten2014)  
-rm(list = c("g2018", "g2016", "g2014"))
+#rm(list = c("g2018", "g2016", "g2014"))
 
 
 
