@@ -116,8 +116,8 @@ Y_test = train_test_split(X, Y, test_size=0.33, random_state=42)
 
 def baseline_model():
     model = Sequential()
-    model.add(Dense(18, input_dim=classN, activation='relu'))
-    model.add(Dense(9, activation='relu'))
+    model.add(Dense(classN*4, input_dim=classN, activation='relu'))
+    model.add(Dense(classN*2, activation='relu'))
     model.add(Dense(3,  activation='softmax')) #Attentie! het aantal units moet hier het aantal classen matchen, dus 3 in geval van low mid high
     model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['accuracy'])
     return model
@@ -134,7 +134,7 @@ dummy_y_test = dummy_encoder(Y_test)
 
 model = baseline_model()
 
-model.fit(x = X_train, y = dummy_y_train , epochs=200, batch_size=25)
+model.fit(x = X_train, y = dummy_y_train , epochs=100, batch_size=10)
 _, accuracy = model.evaluate(X_test, dummy_y_test)
 print('Accuracy: %.2f' % (accuracy*100))
 
