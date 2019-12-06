@@ -44,7 +44,6 @@ def replacecommas(x):
     else:
         return x
 
-
 dataf = pd.read_csv(datapath, encoding = 'ISO-8859-1', sep=";").applymap(replacecommas)
 dataf.drop(dataf.columns[0:4],axis=1,inplace=True)
 
@@ -123,21 +122,22 @@ def baseline_model():
     model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['accuracy'])
     return model
 
-encoder_train = LabelEncoder()
-encoder_train.fit(Y_train)
-encoded_Y_train = encoder_train.transform(Y_train)
-dummy_y_train = np_utils.to_categorical(encoded_Y_train)
+def dummy_encoder(df):
+    encoder = LabelEncoder()
+    encoder.fit(df)
+    encoded_df = encoder.transform(df)
+    dummy_df = np_utils.to_categorical(encoded_df)
+    return dummy_df
 
-encoder_test = LabelEncoder()
-encoder_test.fit(Y_test)
-encoded_Y_test = encoder_test.transform(Y_test)
-dummy_y_test = np_utils.to_categorical(encoded_Y_test)
+dummy_y_train = dummy_encoder(Y_train)
+dummy_y_test = dummy_encoder(Y_test)
 
 model = baseline_model()
 
 model.fit(x = X_train, y = dummy_y_train , epochs=200, batch_size=25)
 _, accuracy = model.evaluate(X_test, dummy_y_test)
 print('Accuracy: %.2f' % (accuracy*100))
+
 # =============================================================================
 # estimator = KerasClassifier(build_fn=baseline_model, epochs=200, batch_size=5, verbose=0)
 # kfold = KFold(n_splits=10, shuffle=True)
