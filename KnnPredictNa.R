@@ -2,7 +2,7 @@
 
 #deze package heb je nodig en moeten we later nog even in 1.import verwerken
 #install.packages("DMwR")
-#library(DMwR)
+library(DMwR)
 
 ?write.csv
 
