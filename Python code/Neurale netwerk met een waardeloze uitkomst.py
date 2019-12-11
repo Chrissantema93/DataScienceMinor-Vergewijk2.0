@@ -19,14 +19,14 @@ from sklearn.model_selection import train_test_split
 
 
 ## Zet hier eerst het pad goed 
-data_path = ['..//GitHub//Vergewijk//Data']
-#data_path = ['C://Users//anton//Documents//GitHub//Vergewijk//Data']
+#data_path = ['..//GitHub//Vergewijk//Data']
+data_path = ['C://Users//anton//Documents//GitHub//Vergewijk//Data']
 
-filepath = os.sep.join(data_path + ['output_2.csv'])
+filepath = os.sep.join(data_path + ['KnnMergedData.csv'])
 
-data = pd.read_csv(filepath, encoding = 'ISO-8859-1', sep="|")#, names=fields )#, sep=",", header=None)
+data = pd.read_csv(filepath, encoding = 'ISO-8859-1', sep=";")#, names=fields )#, sep=",", header=None)
 #data.head
-data = data.fillna(0)
+#data = data.fillna(0)
 
 #import chardet    
 #rawdata = open(filepath, 'rb').read()
