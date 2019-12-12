@@ -15,3 +15,4 @@ source("3.MergeGemeenteJaar.R")
 source("4.Opschonen van alle datasets.R")
 source("5.Clusters, classificatie en tree.R")
 runApp("6.Shiny.R")
+

@@ -67,9 +67,9 @@ PrepareData <- function(PATH) {
     Filter(function(x)!all(is.na(x)), datalist[[i]]) -> datalist[[i]]
     
     #Alle NA values vullen met de gemiddelde waarde die behoort bij de kolom. Dit is gedaan zodat elk veld gevuld is.
-  #  for(k in 5:ncol(datalist[[i]])){
-  #    datalist[[i]][is.na(datalist[[i]][,k]), k] <- as.integer(mean(datalist[[i]][,k], na.rm = TRUE))
-  #  }
+    for(k in 5:ncol(datalist[[i]])){
+      datalist[[i]][is.na(datalist[[i]][,k]), k] <- as.integer(mean(datalist[[i]][,k], na.rm = TRUE))
+    }
     
     #verwijderen van bepaalde column namen 
     ColumnToDrop <- c("Meest_voorkomende_postcode_code")

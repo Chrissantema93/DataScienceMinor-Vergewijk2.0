@@ -79,7 +79,7 @@ coltodel <- colnames(cbstotaal)[colSums(is.na(cbstotaal)) > (nrow(cbstotaal) / 2
 cbstotaal <- cbstotaal[ , !(names(cbstotaal) %in% coltodel)]
 
 #?knnImputation
-
+library(DMwR)
 knnOutput <- knnImputation(cbstotaal, k = 10, scale = T, meth = "weighAvg")  # perform knn imputation.
 anyNA(knnOutput)
 #> FALSE
