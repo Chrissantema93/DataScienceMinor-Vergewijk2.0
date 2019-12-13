@@ -43,6 +43,7 @@ InstallAndLoadPkgs(c("shiny"       , # Om de data te presenteren
                      "partykit"    , # Gebruiken we deze nog?
                      "sp"          , # Voor het mergen van de Spatial Polygon data
                      "geojsonio"   , # Voor zover ik weet wordt deze niet meer gebruikt
-                     "DMwR"          # voor knnpredicter
+                     "DMwR"        , # voor knnpredicter
+                     "lme4"
                      ))
 
