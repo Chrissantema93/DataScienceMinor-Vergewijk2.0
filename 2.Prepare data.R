@@ -54,11 +54,11 @@ PrepareData <- function(PATH) {
       datalist[[i]][ ,j] <- as.numeric(datalist[[i]][ ,j])
     }
     
-    #de kolommen 8 t/m 24 omrekenen naar absolute waardes
+    #de kolommen 9 t/m 24 omrekenen naar absolute waardes
     if (i == 1) {
-      for(j in 8:24){
+      for(j in 9:24){
         for(k in 1:nrow(datalist[[i]])){
-          datalist[[i]][k,j] <- ((datalist[[i]][k,j] * datalist[[i]][k,5])/100)
+          datalist[[i]][k,j] <- ((datalist[[i]][k,j] * datalist[[i]][k,6])/100)
         }
       }
     }
