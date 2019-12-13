@@ -28,9 +28,15 @@ from keras.utils import np_utils
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import KFold
 
+from sklearn.preprocessing import StandardScaler
+
+from sklearn.ensemble import RandomForestRegressor
 
 
 from tensorflow.python.client import device_lib
+
+from sklearn.ensemble import RandomForestClassifier 
+
 print(device_lib.list_local_devices())
 
 
@@ -116,8 +122,8 @@ Y_test = train_test_split(X, Y, test_size=0.33, random_state=42)
 
 def baseline_model():
     model = Sequential()
-    model.add(Dense(classN*4, input_dim=classN, activation='relu'))
-    model.add(Dense(classN*2, activation='relu'))
+    model.add(Dense(classN * 4, input_dim=classN, activation='relu'))
+    model.add(Dense(classN * 2, activation='relu'))
     model.add(Dense(3,  activation='softmax')) #Attentie! het aantal units moet hier het aantal classen matchen, dus 3 in geval van low mid high
     model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['accuracy'])
     return model
@@ -155,3 +161,40 @@ print('Accuracy: %.2f' % (accuracy*100))
 # print('Accuracy: %.2f' % (accuracy*100))
 # =============================================================================
 
+
+
+
+
+
+#def replacecommas2(x):
+#    if(type(x) is str):
+#        return x.replace(',','.')
+#    else:
+#        return x
+#
+#d2019 = pd.read_csv("Data/2019.csv", encoding = 'ISO-8859-1', sep=";").applymap(replacecommas2)
+#codes = d2019['Codering_code']
+#d2019.drop(d2019.columns[0], axis=1, inplace=True)
+#d2019.drop(d2019.columns[0], axis=1, inplace=True) 
+#d2019 = d2019.applymap(pd.to_numeric)
+#
+#X = d2019
+#y = codes 
+#
+#
+#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+#
+#sc = StandardScaler()
+#X_train = sc.fit_transform(X_train)
+#X_test = sc.transform(X_test)
+#
+#X_train = DataFrame(X_train, columns  = d2019.columns)
+#X_test = DataFrame(X_test, columns  = d2019.columns)
+#
+#regressor = RandomForestClassifier(n_estimators=20, random_state=0)
+#regressor.fit(X_train, y_train)
+#y_pred = regressor.predict(X_test)
+#
+#feature_importances = pd.DataFrame(regressor.feature_importances_, index = X_train.columns,columns=['importance']).sort_values('importance',ascending=False)
+#
+#feature_importances.to_csv("Data/feature_importance.csv")

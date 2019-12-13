@@ -1,0 +1,25 @@
+Wijkgrootte: 		Oppervlakte_land_ha, 
+	    		Oppervlakte_totaal_ha
+
+Sub: Onderhoud omgeving: Sub_X..voldoende.aanwezig.gebruiksgroen..picknick..sporten..spelen.,
+			 Sub_X..tevreden.over.onderhoud.stoepen,
+			 Sub_Milieu.subjectief,
+			 Sub_X..voldoende.aanwezig.groen..grasveldjes..bomen,		 
+
+Obj: Openbaar_vervoer: Obj_aantal.tramhaltes,
+		       Obj_X..woningen.met.bushaltes.binnen.normafstand,
+		       Obj_aantal.metrostations,
+		       Obj_aantal.bushaltes
+
+Si: Ontwikkeling:  	Si_X..werkende.jongeren..18.t.m.22.jr.,
+			Si_X..bewoners..23.t.m.64.jr..met.werk,
+			Si_X..bewoners..18.jr.en.ouder..dat.nog.maar.kort.in.Nederland.woont,
+			Si_X..bewoners.dat.zegt.dat.de.omgang.tussen.etnische.groepen.in.de.buurt.goed.is
+
+			
+
+
+			
+		       
+		       
+
