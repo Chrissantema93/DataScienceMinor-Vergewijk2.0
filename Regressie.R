@@ -203,19 +203,6 @@ FinalResult <- bind_cols(Code.Naam, cbstotaal)
 
 
 
-library(lme4)
-
-#lmm <- lmer(Aantal_inwoners_aantal ~ Jaar_ + (1 | `Codering_code`), data = trainingData,
-#            REML = FALSE)
-#summary(lmm)
-#distPred <- predict(lmm, data.frame(Jaar_ = 2019, Codering_code = 'BU05990110'))  # predict distance     
-
-
-
-
-#lmMod <- lm(reformulate(termlabels = 'Jaar_', response = test) , data=trainingData_2)  # build the model
-
-
 
 testData <- FinalResult[FinalResult$jaar == 2014,]
 
@@ -257,170 +244,32 @@ for (j in colnames(testData)[5:ncol(testData)]){
 }
 #}
 
+hoi <- testData
 
 
+testData[testData <0] <- NA
 
 
 
 
+FinalResult_2 <- bind_rows(FinalResult, testData)
 
 
+#bewaar coderingcode en buurtnaam, deze gaan we na het opvullen van waardes weer terug plakken
+Code.Naam <- FinalResult_2[c('Codering_code','_Wijken_en_buurten')]
 
+#aleen numerieke waardes
+nums <- unlist(lapply(FinalResult_2, is.numeric))
+FinalResult_2 <- FinalResult_2[,nums]
 
+knnOutput <- knnImputation(FinalResult_2, k = 10, scale = T, meth = "weighAvg")  # perform knn imputation.
+anyNA(knnOutput)
 
 
+FinalResult_2 <- bind_cols(Code.Naam, knnOutput)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#######################################################################################################
-
-
-
-
-
-
-
-
-testData <- buurten2018[,]
-testData$Jaar_ <- 2019
-trainingData <- btotaal[btotaal$Jaar_ %in% c(2014, 2015, 2016, 2017, 2018), ]  # model training data
-trainingData <- trainingData[which(trainingData$Codering_code %in% buurten2016$Codering_code), ]
-#testData  <- btotaal[btotaal$Jaar_ == 2018, ]  # model training data  # test data
-#testData <- testData[which(testData$Codering_code %in% buurten2016$Codering_code), ]
-
-# trainingData <- trainingData[trainingData$`_Wijken_en_buurten` == "Zuidwijk",]
-# testData <- testData[testData$`_Wijken_en_buurten` == "Zuidwijk",]
-
-
-
-
-
-
-     for ( i in unique(trainingData$Codering_code)){
-       for (j in colnames(testData_2)[6:23]){
-         
-         trainingData_2 <- trainingData[trainingData$Codering_code == i,]
-         #  print(trainingData_2)
-         testData_2 <- testData[testData$Codering_code == i,]
-         #testData_2$Jaar_ <- 2019
-         testData_2[,j] <- NA
-         test <- as.name(j)
-         
-         lmMod <- lm(reformulate(termlabels = 'Jaar_', response = test) , data=trainingData_2)  # build the model
-         
-         #reformulate(termlabels = Jaar_, response = j)
-         
-         distPred <- predict(lmMod, data.frame(Jaar_ = 2019))  # predict distance
-         
-         actuals_preds <- data.frame(cbind(actuals=testData_2$Aantal_inwoners_aantal, predicteds=distPred))  # make actuals_predicteds dataframe.
-         # print(actuals_preds[2])
-         testData[testData$Codering_code == i, j] <- floor(actuals_preds[2])
-       }
-     }
-     
-
-     
-     
-     
-     
-     library(lme4)
-     
-lmm <- lmer(Aantal_inwoners_aantal ~ Jaar_ + (1 | `Codering_code`), data = trainingData,
-            REML = FALSE)
-summary(lmm)
-distPred <- predict(lmm, data.frame(Jaar_ = 2019, Codering_code = 'BU05990110'))  # predict distance     
-
-
-
-     
-#lmMod <- lm(reformulate(termlabels = 'Jaar_', response = test) , data=trainingData_2)  # build the model
-     
-    
-     
-     
-     
-
-for ( i in unique(trainingData$Codering_code)){
-  for (j in colnames(testData)[6:23]){
-    
-    trainingData_2 <- trainingData[trainingData$Codering_code == i,]
-    
-    testData_2 <- testData[testData$Codering_code == i,]
-   
-     testData_2[,j] <- NA
-   # test <- as.name(j)
-   # print(test)
-    
-    
-    
-    # f <- reformulate(c(Jaar_ ,"(1|`Codering_code`)"),response=j)
-    # lmer(f,data=dd2)
-    
-    f <- reformulate(c(`Jaar_`," (1|`Codering_code`)"),response=j)
-    lmm <- lmer(f, data = trainingData, REML = FALSE)
-    
-        
-    #lmMod <- lm(reformulate(termlabels = 'Jaar_', response = test) , data=trainingData_2)  # build the model
-    
-    #reformulate(termlabels = Jaar_, response = j)
-    
-    distPred <- predict(lmm, data.frame(`Jaar_`= 2019, Codering_code = i))  # predict distance     
-
-    #actuals_preds <- data.frame(cbind(actuals=testData$Aantal_inwoners_aantal, predicteds=distPred))  # make actuals_predicteds dataframe.
-    # print(actuals_preds[2])
-    testData[testData$Codering_code == i, j] <- floor(actuals_preds[2])
-  }
-}
-
-
-
-trainingData$Jaar_
-
-
-
-
-
-
-
-
-formula <- list(); model <- list()
-for (i in 1:1) {
-  formula[[i]] = paste0(strCols[7], " ~ ", strCols[7+i])
-  model[[i]] = glm(formula[[i]]) 
-
-
-
-
-
-  hoi <- merge(btotaal,train,by=c("Codering_code","Jaar"),all.x = T)
-  write.csv(hoi, file = "output_8.csv", row.names = FALSE)
-
-  
-  
-  ?write.csv
-  
-  
-  
-  
+write.csv2(FinalResult_2, file = "Data/2019.csv", sep = ";", row.names = FALSE)
   
   
   
