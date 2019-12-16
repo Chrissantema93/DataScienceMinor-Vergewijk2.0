@@ -139,116 +139,116 @@ voorspelGdata <- function(g14,g16,g18) {
   g18 <- read.csv(file = "Data/G2014 - 2018/g2018.csv", sep= ";", stringsAsFactors = FALSE, dec=",", check.names=FALSE)
   
   
-  
-  
+
+
   # g14$jaar <- 2014
   # g16$jaar <- 2016
   # g18$jaar <- 2018
-  # 
-  # 
+  #
+  #
   # G_Total <- list()
   # G_Total[[1]] <- g14
   # G_Total[[2]] <- g16
   # G_Total[[3]] <- g18
-  # 
-  # 
+  #
+  #
   # gtotaal <- bind_rows(G_Total[[1]],G_Total[[2]],G_Total[[3]])
-  # 
-  # 
-  # 
+  #
+  #
+  #
   # #gtotaal$Sub_BUURT
-  # 
+  #
   # #bewaar coderingcode en buurtnaam, deze gaan we na het opvullen van waardes weer terug plakken
   # Code.Naam_g <- gtotaal[c('Sub_naam.gebied..voormalig.deelgemeente.','Sub_BUURT', 'Codering_code')]
-  # 
+  #
   # #aleen numerieke waardes
   # nums <- unlist(lapply(gtotaal, is.numeric))
   # gtotaal <- gtotaal[,nums]
-  # 
+  #
   # #Alle NA values vullen met de gemiddelde waarde die behoort bij de kolom. Dit is gedaan zodat elk veld gevuld is.
   # for(k in 1:ncol(gtotaal)){
   #   gtotaal[is.na(gtotaal[,k]), k] <- as.integer(mean(gtotaal[,k], na.rm = TRUE))
   # }
-  # 
+  #
   # FinalResult_G <- bind_cols(Code.Naam_g, gtotaal)
-  # 
-  # 
+  #
+  #
   # testData <- FinalResult_G[FinalResult_G$jaar == 2014, ]
   # testData$jaar <- 2015
   # trainingData <- FinalResult_G
-  # 
-  # 
-  # 
-  # 
-  # 
+  #
+  #
+  #
+  #
+  #
   # for (j in colnames(testData)[5:(ncol(testData)-1)]){
   #   print(j)
   #   #(ncol(testData)-1)
   #   # trainingData_2 <- trainingData[trainingData$Codering_code == i,]
   #   trainingData_2 <- trainingData[,j]
   #   # testData_2 <- testData[testData$Codering_code == i,]
-  #   testData_2 <- testData[,j] 
-  #   
-  #   
+  #   testData_2 <- testData[,j]
+  #
+  #
   #   test <- as.name(j)
   #   f <- reformulate(c('`jaar`'," (1|`Sub_BUURT`)"),response=test)
   #   lmm <- lmer(f, data = trainingData, REML = FALSE)
-  #   
-  #   
-  #   
+  #
+  #
+  #
   #   for ( k in unique(trainingData$Sub_BUURT)){
   #     #  print(k)
   #     #testData[k,j] <- NA
-  #     distPred <- predict(lmm, data.frame(`jaar`= 2015, Sub_BUURT = k), allow.new.levels = FALSE)  # predict distance     
+  #     distPred <- predict(lmm, data.frame(`jaar`= 2015, Sub_BUURT = k), allow.new.levels = FALSE)  # predict distance
   #     #print(distPred)
   #     actuals_preds <- data.frame(cbind(actuals=testData$Aantal_inwoners_aantal, predicteds=distPred))  # make actuals_predicteds dataframe.
   #     # print(actuals_preds[2])
-  #     testData[testData$Sub_BUURT == k, j] <- actuals_preds#[1,2]  
+  #     testData[testData$Sub_BUURT == k, j] <- actuals_preds#[1,2]
   #   }
-  #   
+  #
   # }
-  # 
+  #
   # g15 <- testData
-  # 
-  # 
-  # 
-  # 
+  #
+  #
+  #
+  #
   # testData <- FinalResult_G[FinalResult_G$jaar == 2014, ]
   # testData$jaar <- 2017
   # trainingData <- FinalResult_G
-  # 
-  # 
-  # 
-  # 
-  # 
+  #
+  #
+  #
+  #
+  #
   # for (j in colnames(testData)[5:(ncol(testData)-1)]){
   #   print(j)
   #   #(ncol(testData)-1)
   #   # trainingData_2 <- trainingData[trainingData$Codering_code == i,]
   #   trainingData_2 <- trainingData[,j]
   #   # testData_2 <- testData[testData$Codering_code == i,]
-  #   testData_2 <- testData[,j] 
-  #   
-  #   
+  #   testData_2 <- testData[,j]
+  #
+  #
   #   test <- as.name(j)
   #   f <- reformulate(c('`jaar`'," (1|`Sub_BUURT`)"),response=test)
   #   lmm <- lmer(f, data = trainingData, REML = FALSE)
-  #   
-  #   
-  #   
+  #
+  #
+  #
   #   for ( k in unique(trainingData$Sub_BUURT)){
   #     #  print(k)
   #     #testData[k,j] <- NA
-  #     distPred <- predict(lmm, data.frame(`jaar`= 2017, Sub_BUURT = k), allow.new.levels = FALSE)  # predict distance     
+  #     distPred <- predict(lmm, data.frame(`jaar`= 2017, Sub_BUURT = k), allow.new.levels = FALSE)  # predict distance
   #     #print(distPred)
   #     actuals_preds <- data.frame(cbind(actuals=testData$Aantal_inwoners_aantal, predicteds=distPred))  # make actuals_predicteds dataframe.
   #     # print(actuals_preds[2])
-  #     testData[testData$Sub_BUURT == k, j] <- actuals_preds#[1,2]  
+  #     testData[testData$Sub_BUURT == k, j] <- actuals_preds#[1,2]
   #   }
-  #   
+  #
   # }
   # g17 <- testData
-  
+
   res <- list(g14,g15,g16,g17,g18)
   return(res)
   
