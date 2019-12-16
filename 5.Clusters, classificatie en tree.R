@@ -119,28 +119,42 @@ train <- create_train_test(Test.CuratedSet, size = 1) # Met een size van 1 train
 train_test <- create_train_test(Test.CuratedSet, size = 1, train = FALSE)
 colnames(train)[1] <- "Codering_code" #weghalen van laagstreepje. Dit kan niet in een formule.
 
-xTarg <- "Codering_code"
-yFeat <- colnames(Test.set)[-c(1,2)]
+firstTwoColIndex <- -c(1,2)
 
+xTarg <- "Codering_code"
+yFeat <- colnames(Test.set)[firstTwoColIndex]
 target <- CreateDicisionForumla(xTarg, yFeat)
 
 
 fit <- rpart(target, data = train, method = "class", cp = 0.000001)
 draw.tree(fit, print.levels = TRUE)
 
+# predicter <- function(tree, prediction){
+#   nCols <- 4
+#   if(length(prediction) > nCols && length(prediction) < nCols){
+#     stop("prediction moet een vector zijn van precies 4 factors, te kiezen uit low, mid en high")
+#   }
+#   
+#   df <- data.frame(matrix(ncol = nCols, nrow = 0))
+#   res <- rbind(df, prediction)
+#   colnames(res) <- colnames(Test.set)[-c(1,2)]
+#   
+#   print(predict(tree, res ,type="prob", na.action = "na.exclude"))
+# }
 
-predicter <- function(tree, prediction){
-  nCols <- 4
-  if(length(prediction) > nCols && length(prediction) < nCols){
-    stop("prediction moet een vector zijn van precies 4 factors, te kiezen uit low, mid en high")
+predicter <- function(tree, prediction) {
+  yNCols <- length(yFeat)
+  pNCols <- length(prediction)
+  
+  if(yNCols != pNCols) {
+    stop(paste("Parameter 'prediction' bevat niet alle clusters. Moet gelijk zijn aan een lengte van: ", yNCols, ". Huidige lengte: ", pNCols))
   }
   
-  df <- data.frame(matrix(ncol = nCols, nrow = 0))
-  res <- rbind(df, prediction)
-  colnames(res) <- colnames(Test.set)[-c(1,2)]
-  
-  print(predict(tree, res ,type="prob", na.action = "na.exclude"))
+  res <-  rbind(data.frame(matrix(ncol = pNCols, nrow = 0)), prediction)
+  colnames(res) <- yFeat
+  return(predict(tree, res, type="prob", na.action = "na.exclude"))
 }
+
 
 # predicter(fit, c("high", "high", "high", "high")) 
 # ff <- predict(fit, train_test, type="prob")
