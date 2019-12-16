@@ -43,6 +43,7 @@ buurten2016$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`<- as.num
 buurten2018$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`<- as.numeric(buurten2018$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`)
 
 
+#Buurten_Totaal <- bind_rows(buurten2014, buurten2015, buurten2016, buurten2017, buurten2018)
 Buurten_Totaal <- read.csv(file = "Data/2019.csv", sep= ";", stringsAsFactors = FALSE, dec=",", check.names=FALSE)
 
 Buurten_Totaal[is.na(Buurten_Totaal$`_Wijken_en_buurten`), "_Wijken_en_buurten"] <- "'s Gravenland"
@@ -91,28 +92,28 @@ Buurten_Totaal[is.na(Buurten_Totaal$`_Wijken_en_buurten`), "_Wijken_en_buurten"]
 #   # trainingData_2 <- trainingData[trainingData$Codering_code == i,]
 #   trainingData_2 <- trainingData[,j]
 #   # testData_2 <- testData[testData$Codering_code == i,]
-#   testData_2 <- testData[,j] 
-#   
+#   testData_2 <- testData[,j]
+# 
 #   #testData_2[,j] <- NA
 #   test <- as.name(j)
 #   f <- reformulate(c('`Jaar_`'," (1|`Codering_code`)"),response=test)
 #   lmm <- lmer(f, data = trainingData, REML = FALSE)
-#   
+# 
 #   # ?reformulate
-#   
+# 
 #   for ( k in unique(trainingData$Codering_code)){
-#     
+# 
 #     #testData[k,j] <- NA
-#     distPred <- predict(lmm, data.frame(`Jaar_`= 2019, Codering_code = k), allow.new.levels = FALSE)  # predict distance     
+#     distPred <- predict(lmm, data.frame(`Jaar_`= 2019, Codering_code = k), allow.new.levels = FALSE)  # predict distance
 #     #print(distPred)
 #     actuals_preds <- data.frame(cbind(actuals=testData$Aantal_inwoners_aantal, predicteds=distPred))  # make actuals_predicteds dataframe.
 #     # print(actuals_preds[2])
-#     testData[testData$Codering_code == k, j] <- floor(actuals_preds[1,2])  
+#     testData[testData$Codering_code == k, j] <- floor(actuals_preds[1,2])
 #   }
 #   #lmMod <- lm(reformulate(termlabels = 'Jaar_', response = test) , data=trainingData_2)  # build the model
-#   
+# 
 #   #reformulate(termlabels = Jaar_, response = j)
-#   
+# 
 # }
 # #}
 # 
@@ -141,8 +142,6 @@ Buurten_Totaal[is.na(Buurten_Totaal$`_Wijken_en_buurten`), "_Wijken_en_buurten"]
 # FinalResult_2 <- bind_cols(Code.Naam, knnOutput)
 # 
 # #####################################################################
-
-
 
 
 
@@ -248,6 +247,7 @@ cents <- SpatialPointsDataFrame(coords=centroids, data=Buurt.Pol2018@data, proj4
 # De coordinaten worden uit de polygonenopslage gekoppieerd naar het dataframe.
 cents@data$Coord1 <-cents@coords[,1]
 cents@data$Coord2 <-cents@coords[,2]
+
 
 
 
