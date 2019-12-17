@@ -9,11 +9,17 @@ ui1 <- fluidPage(
   titlePanel("Vergewijk 'Welke wijk is geschikt voor mij?'."),
   sidebarLayout(
     sidebarPanel(
-      sliderTextInput(inputId = 'Input1', label = 'Cultuur & recreatie: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
-      sliderTextInput(inputId = 'Input2', label = 'Dichtheid bevolking: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
-      sliderTextInput(inputId = 'Input3', label = 'Parkeergelegenheid: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
-      sliderTextInput(inputId = 'Input4', label = 'Woninggrootte: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
-      sliderTextInput(inputId = 'Input5', label = 'Inkomen: ', choices = c("low", "mid", "high"), selected = 'low', grid = TRUE),
+      
+      
+      sliderTextInput(inputId = 'Input1', label = 'Cultuur & recreatie: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+      sliderTextInput(inputId = 'Input2', label = 'Dichtheid bevolking: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+      sliderTextInput(inputId = 'Input3', label = 'Parkeergelegenheid: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+      sliderTextInput(inputId = 'Input4', label = 'Woninggrootte: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+      sliderTextInput(inputId = 'Input5', label = 'Inkomen: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+      sliderTextInput(inputId = 'Input6', label = 'Wijkgrootte: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+      sliderTextInput(inputId = 'Input7', label = 'Onderhoud_omgeving: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+      sliderTextInput(inputId = 'Input8', label = 'Openbaar_vervoer: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+      sliderTextInput(inputId = 'Input9', label = 'Ontwikkeling: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
       # textOutput("treepred"),
       selectInput(inputId = "Jaartal", "Uit welk jaar wilt u de gegevens zien?", choices = 
                     c('2018' = 'Buurt.Pol2018',
@@ -85,7 +91,7 @@ server1 <- function(input, output, session){
   output$vancouver.map <- renderLeaflet({
     Chosen_var <- inputx()@data[,input$Var][which(inputx()@data$Soort_regio_omschrijving == "Buurt")]
     tt2 <- FixLength(Chosen_var, 78) + 1
-    test <-   predicter(fit, c(input$Input1, input$Input2 ,input$Input3  , input$Input4, input$Input5))
+    test <-   predicter(fit, c(input$Input1, input$Input2 ,input$Input3  , input$Input4, input$Input5, input$Input6, input$Input7, input$Input8, input$Input9))
     test3 <-  test[,which(test  > 0) ]
     #test2 <- subset(buurten2018, buurten2018$Codering_code %in% names(test3) , select = `_Wijken_en_buurten`)
     test4 <-  names(test3)
@@ -147,7 +153,7 @@ server1 <- function(input, output, session){
                   layerId= ~`_Wijken_en_buurten`,
                   lng = selected_polygon2@data$Coord1,
                   lat = selected_polygon2@data$Coord2,
-                  popup = state_popup
+                  popup = selected_polygon2@data$`_Wijken_en_buurten`
       )%>%
       
       addLegend(
