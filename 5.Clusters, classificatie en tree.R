@@ -6,7 +6,7 @@
 #####################################
 #Prepareren van de data voor tree
 #####################################
-descision.test <- btotaal2[btotaal2$Soort_regio_omschrijving == 'Buurt' ,]
+descision.test <- Buurten_Totaal#[Buurten_Totaal$Soort_regio_omschrijving == 'Buurt' ,]
 descision.test <- descision.test[which(descision.test$Codering_code %in% buurten2018$Codering_code), ]
 descision.test[is.na(descision.test)] <- 0 ##!!!! <- Iets anders voor verzinnen. Zomaar een 0 plaatsen heeft grote invloed op de uitkomst.
 
@@ -32,10 +32,15 @@ descision.test$Parkeergelegenheid  <- rowMeans(select(descision.test,"Motortweew
 descision.test$mean_Woning_grootte <- rowMeans(select(descision.test,"Hoekwoning_m3", "Hoekwoning_m3", "Huurwoning_m3", "Koopwoning_m3", "Tussenwoning_m3", "Vrijstaande_woning_m3", "Appartement_m3"))
 descision.test$Woning_grootte      <- rowMeans(select(descision.test,"mean_Woning_grootte", "Gemiddelde_woningwaarde_x_1_000_euro", "Bouwjaar_voor_2000_%"))
 descision.test$Inkomen             <- rowMeans(descision.test[,c("Gemiddeld_inkomen_per_inwoners_x_1_000_euro", "20%_personen_met_hoogste_inkomen_%", "Gemiddelde_woningwaarde_x_1_000_euro", "20%_huishoudens_met_hoogste_inkomen_%")] )
+descision.test$Wijkgrootte         <- rowMeans(descision.test[,c("Oppervlakte_land_ha", "Oppervlakte_totaal_ha")] )
+descision.test$Onderhoud_omgeving  <- rowMeans(descision.test[,c("Sub_X..voldoende.aanwezig.gebruiksgroen..picknick..sporten..spelen.", "Sub_X..tevreden.over.onderhoud.stoepen", "Sub_Milieu.subjectief", "Sub_X..voldoende.aanwezig.groen..grasveldjes..bomen.")] )
+descision.test$Openbaar_vervoer    <- rowMeans(descision.test[,c("Obj_aantal.tramhaltes", "Obj_X..woningen.met.bushaltes.binnen.normafstand", "Obj_aantal.metrostations", "Obj_aantal.bushaltes")] )
+descision.test$Ontwikkeling        <- rowMeans(descision.test[,c("Si_X..werkende.jongeren..18.t.m.22.jr.", "Si_X..bewoners..23.t.m.64.jr..met.werk", "Si_X..bewoners..18.jr.en.ouder..dat.nog.maar.kort.in.Nederland.woont", "Si_X..bewoners.dat.zegt.dat.de.omgang.tussen.etnische.groepen.in.de.buurt.goed.is")] )
+
 
 
 #Nieuwe kolommen in een andere set plaatsen
-Test.set <- descision.test %>% select( Codering_code, Jaar_ , Cultuur_recreatie, Dichtheid_Bevolking, Parkeergelegenheid, Woning_grootte, Inkomen) 
+Test.set <- descision.test %>% select( Codering_code, Jaar_ , Cultuur_recreatie, Dichtheid_Bevolking, Parkeergelegenheid, Woning_grootte, Inkomen, Wijkgrootte, Onderhoud_omgeving, Openbaar_vervoer, Ontwikkeling) 
 
 #####################################
 #Density plots van de data
@@ -50,6 +55,13 @@ plot1 <- plotDensity("Dichtheid_Bevolking")
 plot2 <- plotDensity("Cultuur_recreatie")
 plot3 <- plotDensity("Parkeergelegenheid")
 plot4 <- plotDensity("Woning_grootte")
+plot5 <- plotDensity("Inkomen")
+plot6 <- plotDensity("Wijkgrootte")
+plot7 <- plotDensity("Onderhoud_omgeving")
+plot8 <- plotDensity("Openbaar_vervoer")
+plot9 <- plotDensity("Ontwikkeling")
+
+
 
 grid.arrange(plot1, plot2 , plot3, plot4) 
 
@@ -57,24 +69,54 @@ grid.arrange(plot1, plot2 , plot3, plot4)
 #Catagoriën toewijzen
 #####################################
 curateDataSet <- function(dataset) {
-  curateColumn <- function(col) {
-    cSd <- sd(col)
-    cMean <- mean(col)
-    
-    high <- qnorm(0.7, mean = cMean, sd= cSd)
-    low  <- qnorm(0.3, mean = cMean, sd= cSd)
-    curateValue <- function(value){
-      if(value <= low){
-        return("low")
-      }
-      else if((value > low) && (value < high)){
-        return("mid")
-      }
-      else{
-        return("high")
-      }
-    }
-    
+  # curateColumn <- function(col) {
+  #   cSd <- sd(col)
+  #   cMean <- mean(col)
+  #   
+  #   high <- qnorm(0.7, mean = cMean, sd= cSd)
+  #   low  <- qnorm(0.3, mean = cMean, sd= cSd)
+  #   curateValue <- function(value){
+  #     if(value <= low){
+  #       return("low")
+  #     }
+  #     else if((value > low) && (value < high)){
+  #       return("mid")
+  #     }
+  #     else{
+  #       return("high")
+  #     }
+  #   }
+  #   
+  
+    curateColumn <- function(col) {
+      cSd <- sd(col)
+      cMean <- mean(col)
+      high_p <- qnorm(0.8, mean = cMean, sd= cSd)
+      high <- qnorm(0.6, mean = cMean, sd= cSd)
+      low  <- qnorm(0.4, mean = cMean, sd= cSd)
+      low_m  <- qnorm(0.2, mean = cMean, sd= cSd)
+      
+
+      curateValue <- function(value){
+        
+          if(value <= low_m){
+            return("low_m")
+          }
+          else if((value > low_m) && (value < low)){
+            return("low")
+          }
+          else if((value > low) && (value < high)){
+            return("mid")
+          }
+         
+            else if((value > high) && (value < high_p)){
+              return("high")
+            }
+            else{
+              return("high_p")
+            }
+          }
+   
     sapply(col, curateValue)
   }
   
@@ -156,5 +198,5 @@ predicter <- function(tree, prediction) {
 }
 
 
-# predicter(fit, c("high", "high", "high", "high")) 
+# predicter(fit, c("high", "high", "high", "high", "high", "high", "high", "high", "high")) 
 # ff <- predict(fit, train_test, type="prob")

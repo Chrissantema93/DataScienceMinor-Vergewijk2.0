@@ -19,7 +19,7 @@ Si: Ontwikkeling:  	Si_X..werkende.jongeren..18.t.m.22.jr.,
 			
 
 
-			
+descision.test$Onderhoud_omgeving  <- rowMeans(descision.test[,c("Sub_X..voldoende.aanwezig.gebruiksgroen..picknick..sporten..spelen.", "Sub_X..tevreden.over.onderhoud.stoepen", "Sub_Milieu.subjectief", "Sub_X..voldoende.aanwezig.groen..grasveldjes..bomen")] )			
 		       
 		       
 
