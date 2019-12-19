@@ -5,51 +5,140 @@
 
 
 
-ui1 <- fluidPage(
-  titlePanel("Vergewijk 'Welke wijk is geschikt voor mij?'."),
-  sidebarLayout(
-    sidebarPanel(
-      
-      
-      sliderTextInput(inputId = 'Input1', label = 'Cultuur & recreatie: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-      sliderTextInput(inputId = 'Input2', label = 'Dichtheid bevolking: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-      sliderTextInput(inputId = 'Input3', label = 'Parkeergelegenheid: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-      sliderTextInput(inputId = 'Input4', label = 'Woninggrootte: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-      sliderTextInput(inputId = 'Input5', label = 'Inkomen: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-      sliderTextInput(inputId = 'Input6', label = 'Wijkgrootte: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-      sliderTextInput(inputId = 'Input7', label = 'Onderhoud_omgeving: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-      sliderTextInput(inputId = 'Input8', label = 'Openbaar_vervoer: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-      sliderTextInput(inputId = 'Input9', label = 'Ontwikkeling: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-      # textOutput("treepred"),
-      selectInput(inputId = "Jaartal", "Uit welk jaar wilt u de gegevens zien?", choices = 
-                    c('2018' = 'Buurt.Pol2018',
-                      '2017' = 'Buurt.Pol2017',
-                      '2016' = 'Buurt.Pol2016',
-                      '2015' = 'Buurt.Pol2015',
-                      '2014' = 'Buurt.Pol2014'),
-                  selected= '2018')
-    ),      
-    mainPanel(        
-      tabsetPanel(id = "Test",          
-                  tabPanel("3D Plot",
-                           selectInput("Var", "Welke feature wilt u bekijken?", names(Buurt.Pol2018@data), selected=""),
-                           leafletOutput("vancouver.map", width="80%",height="400px"),
-                           selectInput("Business", "Welke wijk is er gekozen", Buurt.Pol2018$buurtnaam, selected="Stadsdriehoek")
-                  ),          
-                  tabPanel("Contour Graph",
-                           tableOutput("data")
-                  ),
-                  tabPanel("Dashboard",
-                           textOutput("tekst.dashboard"),
-                           fluidRow(#12,
-                             column(6,plotOutput('Leeftijdsopbouw')),
-                             column(6,plotOutput('Demografie'))
-                           ),
-                           plotOutput('Tijdlijn')
-                  ),
-                  tabPanel("Decision tree"
-                  )
+# ui1 <- fluidPage(
+#   titlePanel("Vergewijk 'Welke wijk is geschikt voor mij?'."),
+#   sidebarLayout(
+#     sidebarPanel(
+#       
+#       
+#       sliderTextInput(inputId = 'Input1', label = 'Cultuur & recreatie: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+#       sliderTextInput(inputId = 'Input2', label = 'Dichtheid bevolking: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+#       sliderTextInput(inputId = 'Input3', label = 'Parkeergelegenheid: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+#       sliderTextInput(inputId = 'Input4', label = 'Woninggrootte: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+#       sliderTextInput(inputId = 'Input5', label = 'Inkomen: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+#       sliderTextInput(inputId = 'Input6', label = 'Wijkgrootte: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+#       sliderTextInput(inputId = 'Input7', label = 'Onderhoud_omgeving: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+#       sliderTextInput(inputId = 'Input8', label = 'Openbaar_vervoer: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+#       sliderTextInput(inputId = 'Input9', label = 'Ontwikkeling: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+#       # textOutput("treepred"),
+#       selectInput(inputId = "Jaartal", "Uit welk jaar wilt u de gegevens zien?", choices = 
+#                     c('2018' = 'Buurt.Pol2018',
+#                       '2017' = 'Buurt.Pol2017',
+#                       '2016' = 'Buurt.Pol2016',
+#                       '2015' = 'Buurt.Pol2015',
+#                       '2014' = 'Buurt.Pol2014'),
+#                   selected= '2018')
+#     ),      
+#     mainPanel(        
+#       tabsetPanel(id = "Test",          
+#                   tabPanel("3D Plot",
+#                            selectInput("Var", "Welke feature wilt u bekijken?", names(Buurt.Pol2018@data), selected=""),
+#                            leafletOutput("vancouver.map", width="80%",height="400px"),
+#                            selectInput("Business", "Welke wijk is er gekozen", Buurt.Pol2018$buurtnaam, selected="Stadsdriehoek")
+#                   ),          
+#                   tabPanel("Contour Graph",
+#                            tableOutput("data")
+#                   ),
+#                   tabPanel("Dashboard",
+#                            textOutput("tekst.dashboard"),
+#                            fluidRow(#12,
+#                              column(6,plotOutput('Leeftijdsopbouw')),
+#                              column(6,plotOutput('Demografie'))
+#                            ),
+#                            plotOutput('Tijdlijn')
+#                   ),
+#                   tabPanel("Decision tree"
+#                   )
+#                   
+#       )
+#     )
+#   )
+# )
+
+ui1 <- dashboardPage(
+  dashboardHeader(title = "Vergewijk"),
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("3D plot", tabName = "3Dplot", icon = icon("map-marked-alt")),
+      menuItem("Contour Graph", tabName = "ContourGraph", icon = icon("table")),
+      menuItem("Dashboard", tabName = "Dashboard", icon = icon("chart-pie")),
+      menuItem("Decision tree", tabName = "Decisiontree", icon = icon("cogs"))
+    )
+  ),
+  dashboardBody(
+    tabItems(
+      tabItem(tabName = "3Dplot",
+              h2("3D plot"),
+              fluidRow(
+                box(width = 12,
+                    fluidRow(
+                      column(4,
+                          sliderTextInput(inputId = 'Input1', label = 'Cultuur & recreatie: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+                          sliderTextInput(inputId = 'Input2', label = 'Dichtheid bevolking: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+                          sliderTextInput(inputId = 'Input3', label = 'Parkeergelegenheid: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+                          sliderTextInput(inputId = 'Input4', label = 'Woninggrootte: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+                          sliderTextInput(inputId = 'Input5', label = 'Inkomen: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+                          sliderTextInput(inputId = 'Input6', label = 'Wijkgrootte: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+                          sliderTextInput(inputId = 'Input7', label = 'Onderhoud_omgeving: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+                          sliderTextInput(inputId = 'Input8', label = 'Openbaar_vervoer: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+                          sliderTextInput(inputId = 'Input9', label = 'Ontwikkeling: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
+                          # textOutput("treepred"),
+                          selectInput(inputId = "Jaartal", "Uit welk jaar wilt u de gegevens zien?", choices =
+                                        c('2018' = 'Buurt.Pol2018',
+                                          '2017' = 'Buurt.Pol2017',
+                                          '2016' = 'Buurt.Pol2016',
+                                          '2015' = 'Buurt.Pol2015',
+                                          '2014' = 'Buurt.Pol2014'),
+                                      selected= '2018')
+                      ),
+                      column(8,
+                          selectInput("Var", "Welke feature wilt u bekijken?", names(Buurt.Pol2018@data), selected=""),
+                          div(
+                            style= 'margin-bottom:15px', 
+                            leafletOutput("vancouver.map", width="100%",height="500px")
+                          ),
+                          infoBoxOutput(width = 12,"progressBox"),
+                          
+                          div(
+                            style='visibility:hidden',
+                            selectInput("Business", "Welke wijk is er gekozen", Buurt.Pol2018$buurtnaam, selected="Stadsdriehoek")
+                          )
+                          
+                          
+                      )
+                    )
+                )
+              )
                   
+                
+              
+      ),
+      
+      tabItem(tabName = "ContourGraph",
+              h2("Contour Graph"),
+              fluidRow(
+                box(width = 12,
+                  div(style = 'overflow-x: scroll', tableOutput('data'))
+                )
+              )
+      ),
+      
+      tabItem(tabName = "Dashboard",
+              h2("Dashboard"),
+              fluidRow(
+                box(width = 12,
+                    textOutput("tekst.dashboard"),
+                    fluidRow(#12,
+                      column(6,plotOutput('Leeftijdsopbouw')),
+                      column(6,plotOutput('Demografie'))
+                    ),
+                    plotOutput('Tijdlijn')
+                  )
+              )
+      ),
+      
+      tabItem(tabName = "Decisiontree",
+              h2("Decision tree")
       )
     )
   )
@@ -65,6 +154,10 @@ server1 <- function(input, output, session){
   #         Generieke zaken (begin)    #
   ######################################
   
+  output$dimension_display <- renderText({
+    paste(input$dimension[1], input$dimension[2], input$dimension[2]/input$dimension[1])
+  })
+  
   inputx = reactive({   # (1/2) In inputx wordt de waarde uit de selectinput $Jaartal gestopt. 
     get(input$Jaartal)  # (2/2) Dit is het dataset waar een gebruiker mee wil werken in de applicatie
   }) 
@@ -76,6 +169,13 @@ server1 <- function(input, output, session){
   observe({ # Input$Var kan verschillen per dataset. Deze code past de input aan op basis van het dataset.
     updateSelectInput(session, "Var",
                       choices = names(inputx())
+    )
+  })
+  
+  output$progressBox <- renderInfoBox({
+    infoBox(
+      "Gekozen buurt", input$Business, icon = icon("map-marker-alt"),
+      color = "purple"
     )
   })
   

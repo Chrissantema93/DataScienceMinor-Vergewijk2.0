@@ -44,6 +44,7 @@ InstallAndLoadPkgs(c("shiny"       , # Om de data te presenteren
                      "sp"          , # Voor het mergen van de Spatial Polygon data
                      "geojsonio"   , # Voor zover ik weet wordt deze niet meer gebruikt
                      "DMwR"        , # voor knnpredicter
-                     "lme4"
+                     "lme4"        , 
+                     "shinydashboard"
                      ))
 

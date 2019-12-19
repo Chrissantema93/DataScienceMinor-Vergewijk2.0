@@ -19,11 +19,8 @@ CBSbuurten2018 <- temp_buurten[[5]]
 #Alle CBS data wordt onder elkaar gezet (in een data.frame)
 #btotaal <- bind_rows(buurten2018, buurten2017, buurten2016, buurten2015, buurten2014)  
 
-#g2014 <- MergeGemeenteJaar("Data/Gemeente/",2014)
-#g2016 <- MergeGemeenteJaar("Data/Gemeente/",2016)
-#g2018 <- MergeGemeenteJaar("Data/Gemeente/",2018)
 
-temp_jaren <- voorspelGdata(g2014,g2016,g2018)
+temp_jaren <- voorspelGdata()
 
 g2014 <- temp_jaren[[1]]
 g2015 <- temp_jaren[[2]]
@@ -43,141 +40,106 @@ buurten2016$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`<- as.num
 buurten2018$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`<- as.numeric(buurten2018$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`)
 
 
-#Buurten_Totaal <- bind_rows(buurten2014, buurten2015, buurten2016, buurten2017, buurten2018)
-Buurten_Totaal <- read.csv(file = "Data/2019.csv", sep= ";", stringsAsFactors = FALSE, dec=",", check.names=FALSE)
 
-Buurten_Totaal[is.na(Buurten_Totaal$`_Wijken_en_buurten`), "_Wijken_en_buurten"] <- "'s Gravenland"
+if (file.exists(file = "Data/2019.csv")) {
+  Buurten_Totaal <- read.csv(file = "Data/2019.csv", sep= ";", stringsAsFactors = FALSE, dec=",", check.names=FALSE)
+} else {
+  cbstotaal <- bind_rows(buurten2014, buurten2015, buurten2016, buurten2017, buurten2018)
+  # 
+  # #bewaar coderingcode en buurtnaam, deze gaan we na het opvullen van waardes weer terug plakken
+  Code.Naam <- cbstotaal[c('Codering_code','_Wijken_en_buurten')]
+  # 
+  # #aleen numerieke waardes
+  nums <- unlist(lapply(cbstotaal, is.numeric))
+  cbstotaal <- cbstotaal[,nums]
+  
+  # #Alle NA values vullen met de gemiddelde waarde die behoort bij de kolom. Dit is gedaan zodat elk veld gevuld is.
+  for(k in 1:ncol(cbstotaal)){
+    cbstotaal[is.na(cbstotaal[,k]), k] <- as.integer(mean(cbstotaal[,k], na.rm = TRUE))
+  }
+  # 
+  # 
+  FinalResult <- bind_cols(Code.Naam, cbstotaal)
+  # 
+  # 
+  # 
+  # 
+  testData <- FinalResult[FinalResult$jaar == 2014,]
+  
+  #testData <- buurten2014[,]
+  testData$Jaar_ <- 2019
+  trainingData <- FinalResult[FinalResult$Jaar_ %in% c(2014, 2015, 2016, 2017, 2018), ]  # model training data
+  trainingData <- trainingData[which(trainingData$Codering_code %in% buurten2016$Codering_code), ]
+  
+  
+  #for ( i in unique(trainingData$Codering_code)){
+  
+  for (j in colnames(testData)[5:ncol(testData)]){
+    print(j)
+    # trainingData_2 <- trainingData[trainingData$Codering_code == i,]
+    trainingData_2 <- trainingData[,j]
+    # testData_2 <- testData[testData$Codering_code == i,]
+    testData_2 <- testData[,j]
+    
+    #testData_2[,j] <- NA
+    test <- as.name(j)
+    f <- reformulate(c('`Jaar_`'," (1|`Codering_code`)"),response=test)
+    lmm <- lmer(f, data = trainingData, REML = FALSE)
+    
+    # ?reformulate
+    
+    for ( k in unique(trainingData$Codering_code)){
+      
+      #testData[k,j] <- NA
+      distPred <- predict(lmm, data.frame(`Jaar_`= 2019, Codering_code = k), allow.new.levels = FALSE)  # predict distance
+      #print(distPred)
+      actuals_preds <- data.frame(cbind(actuals=testData$Aantal_inwoners_aantal, predicteds=distPred))  # make actuals_predicteds dataframe.
+      # print(actuals_preds[2])
+      testData[testData$Codering_code == k, j] <- floor(actuals_preds[1,2])
+    }
+    #lmMod <- lm(reformulate(termlabels = 'Jaar_', response = test) , data=trainingData_2)  # build the model
+    
+    #reformulate(termlabels = Jaar_, response = j)
+    
+  }
+  #}
+  
+  hoi <- testData
+  
+  
+  testData[testData <0] <- NA
+  
+  
+  
+  
+  FinalResult_2 <- bind_rows(FinalResult, testData)
+  # 
+  # 
+  # #bewaar coderingcode en buurtnaam, deze gaan we na het opvullen van waardes weer terug plakken
+  Code.Naam <- FinalResult_2[c('Codering_code','_Wijken_en_buurten')]
+  # 
+  #aleen numerieke waardes
+  nums <- unlist(lapply(FinalResult_2, is.numeric))
+  FinalResult_2 <- FinalResult_2[,nums]
+  # 
+  knnOutput <- knnImputation(FinalResult_2, k = 10, scale = T, meth = "weighAvg")  # perform knn imputation.
+  anyNA(knnOutput)
+  # 
+  # 
+  Buurten_Totaal <- bind_cols(Code.Naam, knnOutput)
+  Buurten_Totaal[is.na(Buurten_Totaal$`_Wijken_en_buurten`), "_Wijken_en_buurten"] <- "'s Gravenland"
+}
 
 
-# ###########################################
-# CBS_Total <- list()
-# CBS_Total[[1]] <- buurten2014
-# CBS_Total[[2]] <- buurten2015
-# CBS_Total[[3]] <- buurten2016
-# CBS_Total[[4]] <- buurten2017
-# CBS_Total[[5]] <- buurten2018
-# 
-# cbstotaal <- bind_rows(CBS_Total[[1]],CBS_Total[[2]],CBS_Total[[3]],CBS_Total[[4]],CBS_Total[[5]])
-# 
-# #bewaar coderingcode en buurtnaam, deze gaan we na het opvullen van waardes weer terug plakken
-# Code.Naam <- cbstotaal[c('Codering_code','_Wijken_en_buurten')]
-# 
-# #aleen numerieke waardes
-# nums <- unlist(lapply(cbstotaal, is.numeric))
-# cbstotaal <- cbstotaal[,nums]
-# 
-# #Alle NA values vullen met de gemiddelde waarde die behoort bij de kolom. Dit is gedaan zodat elk veld gevuld is.
-# for(k in 1:ncol(cbstotaal)){
-#   cbstotaal[is.na(cbstotaal[,k]), k] <- as.integer(mean(cbstotaal[,k], na.rm = TRUE))
-# }
-# 
-# 
-# FinalResult <- bind_cols(Code.Naam, cbstotaal)
-# 
-# 
-# 
-# 
-# testData <- FinalResult[FinalResult$jaar == 2014,]
-# 
-# #testData <- buurten2014[,]
-# testData$Jaar_ <- 2019
-# trainingData <- FinalResult[FinalResult$Jaar_ %in% c(2014, 2015, 2016, 2017, 2018), ]  # model training data
-# trainingData <- trainingData[which(trainingData$Codering_code %in% buurten2016$Codering_code), ]
-# 
-# 
-# #for ( i in unique(trainingData$Codering_code)){
-# 
-# for (j in colnames(testData)[5:ncol(testData)]){
-#   print(j)
-#   # trainingData_2 <- trainingData[trainingData$Codering_code == i,]
-#   trainingData_2 <- trainingData[,j]
-#   # testData_2 <- testData[testData$Codering_code == i,]
-#   testData_2 <- testData[,j]
-# 
-#   #testData_2[,j] <- NA
-#   test <- as.name(j)
-#   f <- reformulate(c('`Jaar_`'," (1|`Codering_code`)"),response=test)
-#   lmm <- lmer(f, data = trainingData, REML = FALSE)
-# 
-#   # ?reformulate
-# 
-#   for ( k in unique(trainingData$Codering_code)){
-# 
-#     #testData[k,j] <- NA
-#     distPred <- predict(lmm, data.frame(`Jaar_`= 2019, Codering_code = k), allow.new.levels = FALSE)  # predict distance
-#     #print(distPred)
-#     actuals_preds <- data.frame(cbind(actuals=testData$Aantal_inwoners_aantal, predicteds=distPred))  # make actuals_predicteds dataframe.
-#     # print(actuals_preds[2])
-#     testData[testData$Codering_code == k, j] <- floor(actuals_preds[1,2])
-#   }
-#   #lmMod <- lm(reformulate(termlabels = 'Jaar_', response = test) , data=trainingData_2)  # build the model
-# 
-#   #reformulate(termlabels = Jaar_, response = j)
-# 
-# }
-# #}
-# 
-# hoi <- testData
-# 
-# 
-# testData[testData <0] <- NA
-# 
-# 
-# 
-# 
-# FinalResult_2 <- bind_rows(FinalResult, testData)
-# 
-# 
-# #bewaar coderingcode en buurtnaam, deze gaan we na het opvullen van waardes weer terug plakken
-# Code.Naam <- FinalResult_2[c('Codering_code','_Wijken_en_buurten')]
-# 
-# #aleen numerieke waardes
-# nums <- unlist(lapply(FinalResult_2, is.numeric))
-# FinalResult_2 <- FinalResult_2[,nums]
-# 
-# knnOutput <- knnImputation(FinalResult_2, k = 10, scale = T, meth = "weighAvg")  # perform knn imputation.
-# anyNA(knnOutput)
-# 
-# 
-# FinalResult_2 <- bind_cols(Code.Naam, knnOutput)
 # 
 # #####################################################################
 
 
-
-
-
-## DIT IS TIJDELIJKE CODE OM DE DESCISION TREE WERKEND TE HOUDEN
-buurten2018 <- merge(x = buurten2018, y = g2018, by = "Codering_code")
-buurten2015 <- buurten2015[which(buurten2015$Codering_code %in% buurten2018$Codering_code), ]
-buurten2016 <- buurten2016[which(buurten2016$Codering_code %in% buurten2018$Codering_code), ]
-buurten2017 <- buurten2017[which(buurten2017$Codering_code %in% buurten2018$Codering_code), ]
-buurten2014 <- buurten2014[which(buurten2014$Codering_code %in% buurten2018$Codering_code), ]
-buurten2018 <- allsets[[5]]
-buurten2018 <- buurten2018[which(buurten2018$Soort_regio_omschrijving == "Buurt"), ]
-buurten2018 <- buurten2018[which(buurten2018$Codering_code %in% buurten2016$Codering_code), ]
-##
-
-btotaal2 <- bind_rows(buurten2018, buurten2017, buurten2016, buurten2015, buurten2014)
-
-
-buurten2014 <- temp_buurten[[1]]
-buurten2015 <- temp_buurten[[2]]
-buurten2016 <- temp_buurten[[3]]
-buurten2017 <- temp_buurten[[4]]
-buurten2018 <- temp_buurten[[5]]
-
-
-
-
-buurten2014 <- merge(x = buurten2014, y = g2014, by = "Codering_code")
-buurten2015 <- merge(x = buurten2015, y = g2015, by = "Codering_code")
-buurten2016 <- merge(x = buurten2016, y = g2016, by = "Codering_code")
-buurten2017 <- merge(x = buurten2017, y = g2018, by = "Codering_code")
-buurten2018 <- merge(x = buurten2018, y = g2018, by = "Codering_code")
-
-buurten2016$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`<- as.numeric(buurten2016$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`)
-buurten2018$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`<- as.numeric(buurten2018$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`)
+buurten2018 <- Buurten_Totaal[which(Buurten_Totaal$jaar == 2018),]
+buurten2017 <- Buurten_Totaal[which(Buurten_Totaal$jaar == 2017),]
+buurten2016 <- Buurten_Totaal[which(Buurten_Totaal$jaar == 2016),]
+buurten2015 <- Buurten_Totaal[which(Buurten_Totaal$jaar == 2015),]
+buurten2014 <- Buurten_Totaal[which(Buurten_Totaal$jaar == 2014),]
 
 btotaal <- bind_rows(buurten2018, buurten2017, buurten2016, buurten2015, buurten2014)  
 #rm(list = c("g2018", "g2016", "g2014"))
