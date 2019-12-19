@@ -157,6 +157,8 @@ create_train_test <- function(data, size = 0.7, train = TRUE) {
   }
 }
 
+Test.CuratedSet[] <- lapply(Test.CuratedSet, factor)
+
 train <- create_train_test(Test.CuratedSet, size = 1) # Met een size van 1 traint het eigenlijk niet.. de norm is 0.7
 train_test <- create_train_test(Test.CuratedSet, size = 1, train = FALSE)
 colnames(train)[1] <- "Codering_code" #weghalen van laagstreepje. Dit kan niet in een formule.
@@ -197,6 +199,9 @@ predicter <- function(tree, prediction) {
   return(predict(tree, res, type="prob", na.action = "na.exclude"))
 }
 
+
+caret::confusionMatrix(data=predict(fit, type="class"), reference=train$Codering_code)
+fit$variable.importance
 
 # predicter(fit, c("high", "high", "high", "high", "high", "high", "high", "high", "high")) 
 # ff <- predict(fit, train_test, type="prob")
