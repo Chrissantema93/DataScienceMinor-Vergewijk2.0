@@ -42,7 +42,7 @@ print(device_lib.list_local_devices())
 
 #Nog leuker: gebruik conda install tensorflow-gpu
 
-datapath = "Data/KnnMergedData_3.csv"
+datapath = "Data/hallo.csv"
 
 def replacecommas(x):
     if(type(x) is str):
@@ -51,7 +51,8 @@ def replacecommas(x):
         return x
 
 dataf = pd.read_csv(datapath, encoding = 'ISO-8859-1', sep=";").applymap(replacecommas)
-dataf.drop(dataf.columns[0:4],axis=1,inplace=True)
+dataf.drop(dataf.columns[0:3],axis=1,inplace=True)
+dataf.drop('Codering_code1', axis=1, inplace=True)
 
 #shrooms = pd.read_csv(datapath)
 
@@ -100,7 +101,7 @@ class ClassifierTranslator:
 
 translator = ClassifierTranslator(dataf)
 
-yColName = "Inkomen"
+yColName = "Ontwikkeling"
 
 X = dataf.drop(yColName, axis = 1)
 Y = dataf[yColName]
@@ -111,7 +112,7 @@ classN = len(X.columns)
 # Floats voor X kunnen blijkbaar gewoon als intput worden gebruikt en hoeven dus niet te worden vertaqld naar levels. Echter kan dit weer niet met de clusters die de mid low high waarden hebben.
 # clusters moeten dus wel worden omgezet.
 # =============================================================================
-for col in X.columns[classN-4:classN]:
+for col in X.columns[classN-8:classN]:
     X[col] = translator.TranslateListForward(colname = col, l = X[col])
 # =============================================================================
 
@@ -124,7 +125,7 @@ def baseline_model():
     model = Sequential()
     model.add(Dense(classN * 4, input_dim=classN, activation='relu'))
     model.add(Dense(classN * 2, activation='relu'))
-    model.add(Dense(3,  activation='softmax')) #Attentie! het aantal units moet hier het aantal classen matchen, dus 3 in geval van low mid high
+    model.add(Dense(5,  activation='softmax')) #Attentie! het aantal units moet hier het aantal classen matchen, dus 3 in geval van low mid high
     model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['accuracy'])
     return model
 
