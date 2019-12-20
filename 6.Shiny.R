@@ -189,7 +189,7 @@ server1 <- function(input, output, session){
   ##############################
   
   output$vancouver.map <- renderLeaflet({
-    Chosen_var <- inputx()@data[,input$Var][which(inputx()@data$Soort_regio_omschrijving == "Buurt")]
+    Chosen_var <- inputx()@data[,input$Var]#[which(inputx()@data$Soort_regio_omschrijving == "Buurt")]
     tt2 <- FixLength(Chosen_var, 78) + 1
     test <-   predicter(fit, c(input$Input1, input$Input2 ,input$Input3  , input$Input4, input$Input5, input$Input6, input$Input7, input$Input8, input$Input9))
     test3 <-  test[,which(test  > 0) ]

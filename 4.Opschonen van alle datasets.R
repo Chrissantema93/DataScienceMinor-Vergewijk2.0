@@ -141,7 +141,7 @@ buurten2016 <- Buurten_Totaal[which(Buurten_Totaal$jaar == 2016),]
 buurten2015 <- Buurten_Totaal[which(Buurten_Totaal$jaar == 2015),]
 buurten2014 <- Buurten_Totaal[which(Buurten_Totaal$jaar == 2014),]
 
-btotaal <- bind_rows(buurten2018, buurten2017, buurten2016, buurten2015, buurten2014)  
+btotaal <- Buurten_Totaal
 #rm(list = c("g2018", "g2016", "g2014"))
 
 
