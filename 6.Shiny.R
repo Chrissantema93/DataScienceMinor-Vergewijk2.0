@@ -311,7 +311,7 @@ server1 <- function(input, output, session){
   ###################################
   
   l.opbouw = reactive({   # (1/2) In inputx wordt de waarde uit de selectinput $Jaartal gestopt. 
-    Leeftijdsopbouw <- subset(buurten2018[rownames(buurten2018) == input$Business  ,c("0_tot_15_jaar_aantal", "15_tot_25_jaar_aantal", 
+    Leeftijdsopbouw <- subset(buurten2018[buurten2018$`_Wijken_en_buurten` == input$Business  ,c("0_tot_15_jaar_aantal", "15_tot_25_jaar_aantal", 
                                                                                       "25_tot_45_jaar_aantal", "45_tot_65_jaar_aantal", 
                                                                                       "65_jaar_of_ouder_aantal")])  # (2/2) Dit is het dataset waar een gebruiker mee wil werken in de applicatie
   }) 
@@ -329,7 +329,7 @@ server1 <- function(input, output, session){
   ###################################
   
   demograf = reactive({   # (1/2) In inputx wordt de waarde uit de selectinput $Jaartal gestopt. 
-    Demografie <- subset(buurten2018[rownames(buurten2018) == input$Business ,c("Marokko_aantal", "Nederlandse_Antillen_en_Aruba_aantal", 
+    Demografie <- subset(buurten2018[buurten2018$`_Wijken_en_buurten` == input$Business ,c("Marokko_aantal", "Nederlandse_Antillen_en_Aruba_aantal", 
                                                                                 "Suriname_aantal", "Turkije_aantal", "Overig_niet-westers_aantal", 
                                                                                 "Westers_totaal_aantal")])
   }) 
