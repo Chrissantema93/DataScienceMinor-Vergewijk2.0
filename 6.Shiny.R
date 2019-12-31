@@ -4,64 +4,13 @@
 #####################################
 
 
-
-# ui1 <- fluidPage(
-#   titlePanel("Vergewijk 'Welke wijk is geschikt voor mij?'."),
-#   sidebarLayout(
-#     sidebarPanel(
-#       
-#       
-#       sliderTextInput(inputId = 'Input1', label = 'Cultuur & recreatie: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-#       sliderTextInput(inputId = 'Input2', label = 'Dichtheid bevolking: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-#       sliderTextInput(inputId = 'Input3', label = 'Parkeergelegenheid: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-#       sliderTextInput(inputId = 'Input4', label = 'Woninggrootte: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-#       sliderTextInput(inputId = 'Input5', label = 'Inkomen: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-#       sliderTextInput(inputId = 'Input6', label = 'Wijkgrootte: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-#       sliderTextInput(inputId = 'Input7', label = 'Onderhoud_omgeving: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-#       sliderTextInput(inputId = 'Input8', label = 'Openbaar_vervoer: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-#       sliderTextInput(inputId = 'Input9', label = 'Ontwikkeling: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
-#       # textOutput("treepred"),
-#       selectInput(inputId = "Jaartal", "Uit welk jaar wilt u de gegevens zien?", choices = 
-#                     c('2018' = 'Buurt.Pol2018',
-#                       '2017' = 'Buurt.Pol2017',
-#                       '2016' = 'Buurt.Pol2016',
-#                       '2015' = 'Buurt.Pol2015',
-#                       '2014' = 'Buurt.Pol2014'),
-#                   selected= '2018')
-#     ),      
-#     mainPanel(        
-#       tabsetPanel(id = "Test",          
-#                   tabPanel("3D Plot",
-#                            selectInput("Var", "Welke feature wilt u bekijken?", names(Buurt.Pol2018@data), selected=""),
-#                            leafletOutput("vancouver.map", width="80%",height="400px"),
-#                            selectInput("Business", "Welke wijk is er gekozen", Buurt.Pol2018$buurtnaam, selected="Stadsdriehoek")
-#                   ),          
-#                   tabPanel("Contour Graph",
-#                            tableOutput("data")
-#                   ),
-#                   tabPanel("Dashboard",
-#                            textOutput("tekst.dashboard"),
-#                            fluidRow(#12,
-#                              column(6,plotOutput('Leeftijdsopbouw')),
-#                              column(6,plotOutput('Demografie'))
-#                            ),
-#                            plotOutput('Tijdlijn')
-#                   ),
-#                   tabPanel("Decision tree"
-#                   )
-#                   
-#       )
-#     )
-#   )
-# )
-
 ui1 <- dashboardPage(
   dashboardHeader(title = "Vergewijk"),
   dashboardSidebar(
     sidebarMenu(
-      menuItem("3D plot", tabName = "3Dplot", icon = icon("map-marked-alt")),
+      menuItem("3D plot",       tabName = "3Dplot",       icon = icon("map-marked-alt")),
       menuItem("Contour Graph", tabName = "ContourGraph", icon = icon("table")),
-      menuItem("Dashboard", tabName = "Dashboard", icon = icon("chart-pie")),
+      menuItem("Dashboard",     tabName = "Dashboard",    icon = icon("chart-pie")),
       menuItem("Decision tree", tabName = "Decisiontree", icon = icon("cogs"))
     )
   ),
@@ -230,10 +179,10 @@ server1 <- function(input, output, session){
                           inputx()$buurtnaam, 
                           "<br><strong>Value is:   </strong>", 
                           inputx()@data[,input$Var],
+                          "<br><a href='#shiny-tab-Dashboard' data-toggle='tab' data-value='Dashboard'> <b> Ga naar het dashboard </b> </a> <br>",
+                          "Via het dashboard ziet u in een oogopslag de belangrijkste  gegevens over deze wijk!",
+                          sep = "<br/>" ##Hier wordt 'link_click' gebruikt om te navigeren naar de pagina met het Dashboard
                           
-                          sep = "<br/>", ##Hier wordt 'link_click' gebruikt om te navigeren naar de pagina met het Dashboard
-                          actionLink("?url=Test/Dashboard", "Ga naar het dashboard ", onclick = 'Shiny.onInputChange(\"link_click\",  Math.random())'),
-                          "Via het dashboard ziet u in een oogopslag de belangrijkste gegevens over deze wijk!"
     )
     
     ## De onderstaande code zorgt ervoor dat de daadwerkelijke map aangemaakt wordt. Dit is inclusief een legenda.
@@ -325,7 +274,7 @@ server1 <- function(input, output, session){
   ###################################
   
   l.opbouw = reactive({   # (1/2) In inputx wordt de waarde uit de selectinput $Jaartal gestopt. 
-    Leeftijdsopbouw <- subset(buurten2018[rownames(buurten2018) == input$Business  ,c("0_tot_15_jaar_aantal", "15_tot_25_jaar_aantal", 
+    Leeftijdsopbouw <- subset(buurten2018[buurten2018$`_Wijken_en_buurten` == input$Business  ,c("0_tot_15_jaar_aantal", "15_tot_25_jaar_aantal", 
                                                                                       "25_tot_45_jaar_aantal", "45_tot_65_jaar_aantal", 
                                                                                       "65_jaar_of_ouder_aantal")])  # (2/2) Dit is het dataset waar een gebruiker mee wil werken in de applicatie
   }) 
@@ -343,7 +292,7 @@ server1 <- function(input, output, session){
   ###################################
   
   demograf = reactive({   # (1/2) In inputx wordt de waarde uit de selectinput $Jaartal gestopt. 
-    Demografie <- subset(buurten2018[rownames(buurten2018) == input$Business ,c("Marokko_aantal", "Nederlandse_Antillen_en_Aruba_aantal", 
+    Demografie <- subset(buurten2018[buurten2018$`_Wijken_en_buurten` == input$Business ,c("Marokko_aantal", "Nederlandse_Antillen_en_Aruba_aantal", 
                                                                                 "Suriname_aantal", "Turkije_aantal", "Overig_niet-westers_aantal", 
                                                                                 "Westers_totaal_aantal")])
   }) 
