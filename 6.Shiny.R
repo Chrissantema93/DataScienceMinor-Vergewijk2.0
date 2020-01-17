@@ -228,7 +228,7 @@ server1 <- function(input, output, session){
                    opacity = 0.5 ,
                    color = "red",
                    group= "Huizenprijs",
-                   fillColor = "red",
+                   #fillColor = ~pal(log10(tt2)),
                    popup = state_popup,
                    weight = 5 
       ) %>%
