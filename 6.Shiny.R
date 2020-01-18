@@ -6,7 +6,8 @@
 min_ww <- min(btotaal$Gemiddelde_woningwaarde_x_1_000_euro)
 max_ww <- max(btotaal$Gemiddelde_woningwaarde_x_1_000_euro)
 middle_ww <- min_ww + ((max_ww - min_ww) / 2)
-
+middle_ww_l <- middle_ww -40
+middle_ww_h <- middle_ww + 40
 
 
 ui1 <- dashboardPage(
@@ -30,10 +31,10 @@ ui1 <- dashboardPage(
                              h2("Financieel"),
                              sliderInput(inputId = "Huisprijs", label = "Gemiddelde woningwaarde x 1000",
                                          min = min_ww, 
-                                         max = max_ww, 
+                                         max = max_ww,
                                          value = 
-                                           c(middle_ww, 
-                                             middle_ww)
+                                           c(middle_ww_l, 
+                                             middle_ww_h)
                              ),
                              br(),
                              hr(),
@@ -180,7 +181,7 @@ server1 <- function(input, output, session){
     selected_polygon <- subset(Buurt.Pol2018,Buurt.Pol2018@data$buurtcode %in%  test4)
     selected_polygon2 <- subset(cents,cents@data$buurtcode %in%  test4)
     
-    selected_house <- subset(Buurt.Pol2018,    Buurt.Pol2018@data$Gemiddelde_woningwaarde_x_1_000_euro >200 & Buurt.Pol2018@data$Gemiddelde_woningwaarde_x_1_000_euro < 300)
+    selected_house <- subset(Buurt.Pol2018,    Buurt.Pol2018@data$Gemiddelde_woningwaarde_x_1_000_euro > min(input$Huisprijs) & Buurt.Pol2018@data$Gemiddelde_woningwaarde_x_1_000_euro < max(input$Huisprijs))
     selected_house@data$`_Wijken_en_buurten` <- toupper(selected_house@data$`_Wijken_en_buurten`)
     
     #    Buurt.Pol2018@data$Gemiddelde_woningwaarde_x_1_000_euro >200 & Buurt.Pol2018@data$Gemiddelde_woningwaarde_x_1_000_euro < 300
