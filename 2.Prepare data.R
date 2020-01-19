@@ -6,6 +6,14 @@
 PrepareData <- function(PATH) {
   #' @param PATH De plek waar de csv bestanden staan
   
+  #----------------------------------------------
+  # Deze fucntie importeert alle CSV bestanden van het CBS.
+  # De bestanden worden door middel van een loop een voor een
+  # ingeladen, opgeschoont en toegevoegd aan een lijst
+  # uiteindelijk stuur deze functie een lijst met
+  # opgeschoonde Dataframes terug.
+  #----------------------------------------------
+  
   datalist <- list()
   
   for (i in 1:5) {
@@ -30,7 +38,7 @@ PrepareData <- function(PATH) {
     colnames(datalist[[i]]) <- gsub("\\|", "", colnames(datalist[[i]]))
     colnames(datalist[[i]]) <- gsub("\\ ", "_", colnames(datalist[[i]]))
     
-    
+    #rare tekens die verder in de applicatie voor problemen zorgen vervangen
     colnames(datalist[[i]]) <- gsub("²", "2", colnames(datalist[[i]]))
     colnames(datalist[[i]]) <- gsub("é", "e", colnames(datalist[[i]]))
     colnames(datalist[[i]]) <- gsub(" ", "s", colnames(datalist[[i]]))

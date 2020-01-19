@@ -1,4 +1,16 @@
 extractBuurten <- function(allesets) {
+  
+  
+  #----------------------------------------------
+  # De fucntie extractBuurten neemt als parameter een lijst met Dataframes
+  # van de CBS data. In deze Dataframes zitten buurten en wijken. Wij 
+  # hebben alleen de buurten nodig. In deze fucntie worden dus de buurten
+  # geslecteerd en de data wordt opgeschoont.
+  # De fucntie returnt uiteindelijk weer de lijst.
+  #----------------------------------------------
+  
+  
+  
   buurten2014 <- allesets[[1]]
   buurten2015 <- allesets[[2]]
   buurten2016 <- allesets[[3]]
@@ -12,7 +24,9 @@ extractBuurten <- function(allesets) {
   buurten2015 <- buurten2015[which(buurten2015$Soort_regio_omschrijving == "Buurt"), ]
   buurten2014 <- buurten2014[which(buurten2014$Soort_regio_omschrijving == "Buurt"), ]
   
-  
+  #de buurten van het jaar 2014 komen niet overeen met alle andere jaren.
+  #in onderstaande for loop worden de namen van het jaar 2016 gebruikt om zo
+  #de namen van 2014 gelijk te maken aan die van de andere jaren.
   for (i in 1:nrow(buurten2014)) {
     xy <- buurten2016[which(buurten2016$Codering_code == buurten2014$Codering_code[i]),]
     buurten2014[i,"_Wijken_en_buurten"] <- xy$`_Wijken_en_buurten`
@@ -44,6 +58,16 @@ voorspelGdata <- function() {
   ##################################################################
   #GEMEENTEDATA VOORSPELLEN
   ##################################################################
+  
+  
+  #----------------------------------------------
+  # De functie voorspelGdata is een fucntie die de data van
+  # de gemeente Rotterdam inlaad en de missende data voorspelt.
+  # De functie is efficient gemaakt doordat die eigenlijk
+  # maar één keer hoeft te draaien. Daarna worden de resultaten opgeslagen en
+  # deze worden de volgende keer weer hergruikt in plaats van dat ze opnieuw gemaakt worden.
+  # De fucntie returnt een lijst met Dataframes.
+  #----------------------------------------------
   
   #IF een van de files niet aanwezig is... doe dan het hele proces opnieuw
   if (
