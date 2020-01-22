@@ -10,7 +10,7 @@ extractBuurten <- function(allesets) {
   #----------------------------------------------
   
   
-  
+  # De data uit Allsets wordt voor ieder jaar aan een DataFrame gekoppeld.
   buurten2014 <- allesets[[1]]
   buurten2015 <- allesets[[2]]
   buurten2016 <- allesets[[3]]
@@ -35,6 +35,7 @@ extractBuurten <- function(allesets) {
   ## Alle kolommen namen uit buurten2014 wegschrijven naar k.naam 
   k.naam <- colnames(buurten2014)
   
+  #Kolomnamen opschonen
   for(j in 1:108) {
     if (j >= 9 & j <= 24) {
       k.naam[j] <- gsub("\\_%", "_aantal", x = colnames(buurten2014[j]))
@@ -44,6 +45,7 @@ extractBuurten <- function(allesets) {
     }
   }
   
+  #Opgeschoonde kolomnamen terugplaatsen.
   colnames(buurten2014) <- k.naam
   
   
@@ -81,18 +83,18 @@ voorspelGdata <- function() {
     g16 <- MergeGemeenteJaar("Data/Gemeente/",2016)
     g18 <- MergeGemeenteJaar("Data/Gemeente/",2018)
     
-    
+    # Het juiste jaartal toevoegen aan de data
     g14$jaar <- 2014
     g16$jaar <- 2016
     g18$jaar <- 2018
     
-    
+    # De dataframes in een list plaatsen
     G_Total <- list()
     G_Total[[1]] <- g14
     G_Total[[2]] <- g16
     G_Total[[3]] <- g18
     
-    
+    # De beschikbare gemeentedata mergen tot een dataframe
     gtotaal <- bind_rows(G_Total[[1]],G_Total[[2]],G_Total[[3]])
     
     
@@ -111,9 +113,10 @@ voorspelGdata <- function() {
       gtotaal[is.na(gtotaal[,k]), k] <- as.integer(mean(gtotaal[,k], na.rm = TRUE))
     }
     
+    #De numerieke velden koppelen aan de buurtcode + naam
     FinalResult_G <- bind_cols(Code.Naam_g, gtotaal)
     
-    
+    # Dataset preparen als input voor het predicten
     testData <- FinalResult_G[FinalResult_G$jaar == 2014, ]
     testData$jaar <- 2015
     trainingData <- FinalResult_G
@@ -130,13 +133,13 @@ voorspelGdata <- function() {
       # testData_2 <- testData[testData$Codering_code == i,]
       testData_2 <- testData[,j]
       
-      
+      # Het aanmaken van de formule om een voorspelling te kunnen doen.
       test <- as.name(j)
       f <- reformulate(c('`jaar`'," (1|`Sub_BUURT`)"),response=test)
       lmm <- lmer(f, data = trainingData, REML = FALSE)
       
       
-      
+      # In iedere itteratie wordt er een predictie gedaan (1 itteratie = 1 buurtcode)
       for ( k in unique(trainingData$Sub_BUURT)){
         #  print(k)
         #testData[k,j] <- NA
@@ -153,7 +156,7 @@ voorspelGdata <- function() {
     
     
     
-    
+    ## Hetzelfde proces als hierboven, maar dan voor 2017
     testData <- FinalResult_G[FinalResult_G$jaar == 2014, ]
     testData$jaar <- 2017
     trainingData <- FinalResult_G
@@ -164,10 +167,7 @@ voorspelGdata <- function() {
     
     for (j in colnames(testData)[5:(ncol(testData)-1)]){
       print(j)
-      #(ncol(testData)-1)
-      # trainingData_2 <- trainingData[trainingData$Codering_code == i,]
       trainingData_2 <- trainingData[,j]
-      # testData_2 <- testData[testData$Codering_code == i,]
       testData_2 <- testData[,j]
       
       
@@ -178,18 +178,15 @@ voorspelGdata <- function() {
       
       
       for ( k in unique(trainingData$Sub_BUURT)){
-        #  print(k)
-        #testData[k,j] <- NA
         distPred <- predict(lmm, data.frame(`jaar`= 2017, Sub_BUURT = k), allow.new.levels = FALSE)  # predict distance
-        #print(distPred)
         actuals_preds <- data.frame(cbind(actuals=testData$Aantal_inwoners_aantal, predicteds=distPred))  # make actuals_predicteds dataframe.
-        # print(actuals_preds[2])
         testData[testData$Sub_BUURT == k, j] <- actuals_preds#[1,2]
       }
       
     }
     g17 <- testData
     
+    # Alle jaren gemeentedata wegschrijven naar CSV bestanden zodat het predicten de volgende keer niet meer hoeft te gebeuren.
     write.csv2(g14, file = "Data/G2014 - 2018/g2014.csv", sep = ";", row.names = FALSE)
     write.csv2(g15, file = "Data/G2014 - 2018/g2015.csv", sep = ";", row.names = FALSE)
     write.csv2(g16, file = "Data/G2014 - 2018/g2016.csv", sep = ";", row.names = FALSE)
@@ -198,6 +195,7 @@ voorspelGdata <- function() {
     
     
   }
+  # Als aan het begin bleek dat de CSV bestanden aanwezig waren, dan worden deze ingelezen en hoeft de rest van de code niet uitgevoerd te worden.
   else {
     g14 <- read.csv(file = "Data/G2014 - 2018/g2014.csv", sep= ";", stringsAsFactors = FALSE, dec=",", check.names=FALSE)
     g15 <- read.csv(file = "Data/G2014 - 2018/g2015.csv", sep= ";", stringsAsFactors = FALSE, dec=",", check.names=FALSE)
@@ -206,7 +204,7 @@ voorspelGdata <- function() {
     g18 <- read.csv(file = "Data/G2014 - 2018/g2018.csv", sep= ";", stringsAsFactors = FALSE, dec=",", check.names=FALSE)
   }
   
-  
+  # zhet resultaat wordt gemaakt en gereturned
   res <- list(g14,g15,g16,g17,g18)
   return(res)
   

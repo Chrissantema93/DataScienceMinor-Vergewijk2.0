@@ -19,23 +19,24 @@ CBSbuurten2018 <- temp_buurten[[5]]
 #Alle CBS data wordt onder elkaar gezet (in een data.frame)
 #btotaal <- bind_rows(buurten2018, buurten2017, buurten2016, buurten2015, buurten2014)  
 
-
+# De gemeentedata (incl. de voorspelde) wordt ingeladen
 temp_jaren <- voorspelGdata()
 
+# Ieder jaar krijgt een eigen dataframe
 g2014 <- temp_jaren[[1]]
 g2015 <- temp_jaren[[2]]
 g2016 <- temp_jaren[[3]]
 g2017 <- temp_jaren[[4]]
 g2018 <- temp_jaren[[5]]
 
-
+# De CBS data en gemeentedata wordt gemerged
 buurten2014 <- merge(x = CBSbuurten2014, y = g2014, by = "Codering_code")
 buurten2015 <- merge(x = CBSbuurten2015, y = g2015, by = "Codering_code") 
 buurten2016 <- merge(x = CBSbuurten2016, y = g2016, by = "Codering_code")
 buurten2017 <- merge(x = CBSbuurten2017, y = g2017, by = "Codering_code")
 buurten2018 <- merge(x = CBSbuurten2018, y = g2018, by = "Codering_code")
 
-
+# De onderstaande kolommen worden numeriek gemaakt
 buurten2016$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`<- as.numeric(buurten2016$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`)
 buurten2018$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`<- as.numeric(buurten2018$`Si_X..bewoners.dat.bekend.is.met.het.Steunpunt.Mantelzorg`)
 
@@ -66,52 +67,42 @@ if (file.exists(file = "Data/2019.csv")) {
   # 
   testData <- FinalResult[FinalResult$jaar == 2014,]
   
-  #testData <- buurten2014[,]
+  # Data klaar zetten voor regressie
   testData$Jaar_ <- 2019
   trainingData <- FinalResult[FinalResult$Jaar_ %in% c(2014, 2015, 2016, 2017, 2018), ]  # model training data
-  trainingData <- trainingData[which(trainingData$Codering_code %in% buurten2016$Codering_code), ]
+  trainingData <- trainingData[which(trainingData$Codering_code %in% buurten2016$Codering_code), ] # Dataframe om de predictie in op te kunnen slaan
   
-  
-  #for ( i in unique(trainingData$Codering_code)){
-  
+
+# Een loop om door alle kolommen te gaan.  
   for (j in colnames(testData)[5:ncol(testData)]){
-    print(j)
-    # trainingData_2 <- trainingData[trainingData$Codering_code == i,]
-    trainingData_2 <- trainingData[,j]
-    # testData_2 <- testData[testData$Codering_code == i,]
+    print(j) # Status update
+    # We hebben per loop alleen de data van een specifieke kolom nodig
+    trainingData_2 <- trainingData[,j] 
     testData_2 <- testData[,j]
     
-    #testData_2[,j] <- NA
-    test <- as.name(j)
-    f <- reformulate(c('`Jaar_`'," (1|`Codering_code`)"),response=test)
-    lmm <- lmer(f, data = trainingData, REML = FALSE)
+    # De formule wordt aangemaakt
+    test <- as.name(j) # De orginele j werkt niet in de formule
+    f <- reformulate(c('`Jaar_`'," (1|`Codering_code`)"),response=test) # formule aanmaken met reformulate
+    lmm <- lmer(f, data = trainingData, REML = FALSE) # De functie aanmaken voor het voorspellen
     
-    # ?reformulate
-    
+    #Voor iedere buurtcode een voorspelling doen
     for ( k in unique(trainingData$Codering_code)){
-      
-      #testData[k,j] <- NA
+
       distPred <- predict(lmm, data.frame(`Jaar_`= 2019, Codering_code = k), allow.new.levels = FALSE)  # predict distance
-      #print(distPred)
       actuals_preds <- data.frame(cbind(actuals=testData$Aantal_inwoners_aantal, predicteds=distPred))  # make actuals_predicteds dataframe.
-      # print(actuals_preds[2])
-      testData[testData$Codering_code == k, j] <- floor(actuals_preds[1,2])
+      testData[testData$Codering_code == k, j] <- floor(actuals_preds[1,2]) # predictie wegschrijven
     }
-    #lmMod <- lm(reformulate(termlabels = 'Jaar_', response = test) , data=trainingData_2)  # build the model
-    
-    #reformulate(termlabels = Jaar_, response = j)
-    
+
   }
-  #}
-  
+# Finale predictie wegschrijven
   hoi <- testData
   
-  
+  # Negatiev voorspelde velden leeggooien
   testData[testData <0] <- NA
   
   
   
-  
+  # Het opvullen van alle waarde die nog leeg zijn met KnnOutput
   FinalResult_2 <- bind_rows(FinalResult, testData)
   # 
   # 
@@ -130,8 +121,6 @@ if (file.exists(file = "Data/2019.csv")) {
   Buurten_Totaal[is.na(Buurten_Totaal$`_Wijken_en_buurten`), "_Wijken_en_buurten"] <- "'s Gravenland"
 }
 
-
-# 
 # #####################################################################
 
 
@@ -144,12 +133,8 @@ buurten2014 <- Buurten_Totaal[which(Buurten_Totaal$jaar == 2014),]
 btotaal <- Buurten_Totaal
 #rm(list = c("g2018", "g2016", "g2014"))
 
-
-
-#bind_rows(buurten2018, buurten2017, buurten2016, buurten2015, buurten2014) -> btotaal  
-
+# Polygonen data inladen
 poly.g <- geojsonio::geojson_read("Data/Polygons/Rotterdam Wijken_2.geojson", what = "sp")
-
 
 #merge de data van cbs2018 met de geo data van 2018
 # buurtcode en Codering_code zijn bijde kolommen met de code van wijk, hierop worden ze gemerged 
@@ -163,14 +148,11 @@ Buurt.Pol2014 <- merge(x = poly.g, y = buurten2014, by.x = "buurtcode", by.y = "
 #rm(list = c("buurten2018", "buurten2017", "buurten2016", "buurten2015", "buurten2014"))
 #rm(list = c("BuurtEnPoly2018", "BuurtEnPoly2017", "BuurtEnPoly2016", "BuurtEnPoly2015", "BuurtEnPoly2014"))
 
-#Zit nu in Shiny
-#lijst met inwoners van alleen de buurten (wijken zijn eruit gefilterd)
-#InwonersPerWijk <- states@data$Aantal_inwoners_aantal[which(states@data$Soort_regio_omschrijving == "Buurt")]
 
 #als eerst vul ik de lijst op met ??n 0, omdat de lijst 93 lang moet zijn en niet 92
 #dan doe ik alles + 1 omdat de helekaart grijs wordt als er ??n 0 in de vector zit
 #daarna alles X50 zodat het wat beter schaalt, de kleuren gaan van 10 tot 1.000.000 en de normale
-#waardes zitten tussen de 0 en ~20.000 ofzo dus dan heb je weinig kleurverschil
+#waardes zitten tussen de 0 en ~20.000, dus dan heb je weinig kleurverschil
 
 FixLength <- function (Vect,Size) {
   #gebruik: vult de vector op tot de gewenste lengte.
@@ -190,17 +172,8 @@ FixLength <- function (Vect,Size) {
   return(Vect)
 }
 
-#geen idee wat dit is maar het doet wat 
+# Kleurenschaal aanmaken
 pal <- colorNumeric("viridis", NULL, reverse = TRUE)
-
-#for(i in 7:ncol(b2018)){
-#  test <- mean(b2018[b2018$Soort_regio_omschrijving == 'Buurt' ,i])
-#  for(j in 1:nrow(b2018)){
-#    b2018[j, i] <- b2018[j, i] / test
-#  }
-#}
-
-#b2018 <- b2018[b2018$Soort_regio_omschrijving == 'buurt' ,]
 
 # De centroids worden berekend
 centroids <- getSpPPolygonsLabptSlots(Buurt.Pol2018)

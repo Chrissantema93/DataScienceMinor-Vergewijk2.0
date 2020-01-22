@@ -3,6 +3,7 @@
 # 6.Shiny.R
 #####################################
 
+# Code wordt gebruikt om de range van de slider (Huizenprijs) te bepalen
 min_ww <- min(btotaal$Gemiddelde_woningwaarde_x_1_000_euro)
 max_ww <- max(btotaal$Gemiddelde_woningwaarde_x_1_000_euro)
 middle_ww <- min_ww + ((max_ww - min_ww) / 2)
@@ -14,10 +15,10 @@ ui1 <- dashboardPage(
   dashboardHeader(title = "Vergewijk"),
   dashboardSidebar(
     sidebarMenu(
-      menuItem("3D plot",       tabName = "3Dplot",       icon = icon("map-marked-alt")),
-      menuItem("Contour Graph", tabName = "ContourGraph", icon = icon("table")),
+      menuItem("Interactieve map",       tabName = "3Dplot",       icon = icon("map-marked-alt")),
+      menuItem("Data", tabName = "ContourGraph", icon = icon("table")),
       menuItem("Dashboard",     tabName = "Dashboard",    icon = icon("chart-pie")),
-      menuItem("Decision tree", tabName = "Decisiontree", icon = icon("cogs"))
+      menuItem("Door de jaren heen", tabName = "Decisiontree", icon = icon("cogs"))
     )
   ),
   dashboardBody(
@@ -176,25 +177,13 @@ server1 <- function(input, output, session){
     tt2 <- FixLength(Chosen_var, 78) + 1
     test <-   predicter(fit, c(input$Input1, input$Input2 ,input$Input3  , input$Input4, input$Input5, input$Input6, input$Input7, input$Input8, input$Input9))
     test3 <-  test[,which(test  > 0) ]
-    #test2 <- subset(buurten2018, buurten2018$Codering_code %in% names(test3) , select = `_Wijken_en_buurten`)
     test4 <-  names(test3)
+    
     selected_polygon <- subset(Buurt.Pol2018,Buurt.Pol2018@data$buurtcode %in%  test4)
     selected_polygon2 <- subset(cents,cents@data$buurtcode %in%  test4)
     
     selected_house <- subset(Buurt.Pol2018,    Buurt.Pol2018@data$Gemiddelde_woningwaarde_x_1_000_euro > min(input$Huisprijs) & Buurt.Pol2018@data$Gemiddelde_woningwaarde_x_1_000_euro < max(input$Huisprijs))
     selected_house@data$`_Wijken_en_buurten` <- toupper(selected_house@data$`_Wijken_en_buurten`)
-    
-    #    Buurt.Pol2018@data$Gemiddelde_woningwaarde_x_1_000_euro >200 & Buurt.Pol2018@data$Gemiddelde_woningwaarde_x_1_000_euro < 300
-    
-    # lol <- predicter(fit, c("high", "high", "high", "high"))
-    # lol2 <-  lol[,which(lol  > 0) ]
-    # lol3 <- subset(buurten2018, buurten2018$Codering_code %in% names(lol2) , select = `_Wijken_en_buurten`)
-    #  lol4 <- as.vector(lol3[1])
-    #  lol5 <-  names(lol2)
-    #  lol6 <- subset(Buurt.Pol2018,Buurt.Pol2018@data$buurtcode %in%  lol5)
-    #  lol7 <- subset(cents,cents@data$buurtcode %in%  lol5)
-    
-    
     
     ##Op het moment dat de onderstaande code wordt aangeroepen wordt de tekst voor de pop gemaakt.
     state_popup <- paste0("<strong>Name of the district: </strong>", 
@@ -246,17 +235,6 @@ server1 <- function(input, output, session){
                    weight = 1 
       ) %>%
       
-
-      
-      
-      
-      # 
-      # addMarkers( data = selected_polygon2,
-      #             layerId= ~`_Wijken_en_buurten`,
-      #             lng = selected_polygon2@data$Coord1,
-      #             lat = selected_polygon2@data$Coord2,
-      #             popup = selected_polygon2@data$`_Wijken_en_buurten`
-#      )%>%
       
       addLegend(
         position = "bottomleft",
@@ -270,8 +248,6 @@ server1 <- function(input, output, session){
         overlayGroups =c("Data", "Huizenprijs", "Voorspelde wijk"),
         options = layersControlOptions(collapsed=FALSE)
       )
-    
-    
     
   })
   
@@ -357,18 +333,19 @@ server1 <- function(input, output, session){
       labs(x = "Jaren")
   })  
   
+  ###################################################
+  #                                                 #
+  #   GGplots features over de jaren heen           #
+  #                                                 #
+  ###################################################
   
   output$ggplot <- renderPlot({ 
     Geloofsovertuiging <- subset(Buurten_Totaal,
                                  `_Wijken_en_buurten` %in% c(input$Business, input$Vergelijk_wijk) )
-    #  Geloofsovertuiging <- tidyr::unite(Geloofsovertuiging,"id_loc",Jaar_,`_Wijken_en_buurten`,remove = F)
-    
+
     ggplot(Geloofsovertuiging, aes(fill=`_Wijken_en_buurten`, y=Si_X..bewoners.dat.zegt.dat.er.in.de.buurt.genoeg..plekken.voor.geloofsbetuiging.en.levensbeschouwlijke.bijeenkomsten, x= Jaar_ , group = `_Wijken_en_buurten`)) + 
       geom_bar(position="dodge", stat="identity") +
       scale_x_continuous(breaks = seq(2014,2019,1))+
-      
-      # scale_color_manual(values=`_Wijken_en_buurten`) +
-      #facet_grid(. ~ `_Wijken_en_buurten`) +
       ggtitle("Bewoners die vinden dat er voldoende plek is voor geloofsbetuiging!") + 
       labs(y="Aantal (in %)", x = "Jaren")
   })
@@ -379,9 +356,7 @@ server1 <- function(input, output, session){
     Boodschappen <- subset(Buurten_Totaal,
                            `_Wijken_en_buurten` %in% c(input$Business, input$Vergelijk_wijk))
     ggplot(Boodschappen, aes(fill=`_Wijken_en_buurten`, y=Sub_X..voldoende.aanwezig.winkels.dagelijkse.boodschappen, x= Jaar_ , group = `_Wijken_en_buurten`)) + 
-      #    ggplot(Boodschappen, aes(fill=Jaar_, y=Sub_X..voldoende.aanwezig.winkels.dagelijkse.boodschappen, x= Jaar_)) + 
       geom_bar(position="dodge", stat="identity") +
-      #      facet_grid(. ~ `_Wijken_en_buurten`) +
       ggtitle("Voldoende winkels aanwezig voor de dagelijkse boodschappen") + 
       labs(y="Aantal (In %)", x = "Jaren")
   })
@@ -391,9 +366,7 @@ server1 <- function(input, output, session){
     Woningvoorraad <- subset(Buurten_Totaal,
                              `_Wijken_en_buurten` %in% c(input$Business, input$Vergelijk_wijk))
     ggplot(Woningvoorraad, aes(fill=`_Wijken_en_buurten`, y=Woningvoorraad_aantal, x= Jaar_ , group = `_Wijken_en_buurten`)) + 
-      #ggplot(Woningvoorraad, aes(fill=Jaar_, y=Woningvoorraad_aantal, x= Jaar_)) + 
       geom_bar(position="dodge", stat="identity") +
-      #      facet_grid(. ~ `_Wijken_en_buurten`) +
       ggtitle("Woningvoorraad") + 
       labs(y="Aantal (n)", x = "Jaren")
   })
@@ -403,9 +376,7 @@ server1 <- function(input, output, session){
                         `_Wijken_en_buurten` %in% c(input$Business, input$Vergelijk_wijk))
     
     ggplot(Bushaltes, aes(fill=`_Wijken_en_buurten`, y=Obj_X..woningen.met.bushaltes.binnen.normafstand, x= Jaar_ , group = `_Wijken_en_buurten`)) +
-      #ggplot(Bushaltes, aes(fill=Jaar_, y=Obj_X..woningen.met.bushaltes.binnen.normafstand, x= Jaar_)) + 
       geom_bar(position="dodge", stat="identity") +
-      #      facet_grid(. ~ `_Wijken_en_buurten`) +
       ggtitle("%woningen in de buurt van een bushalte") + 
       labs(y="Aantal (In %)", x = "Jaren")
   })
@@ -415,9 +386,7 @@ server1 <- function(input, output, session){
                             `_Wijken_en_buurten` %in% c(input$Business, input$Vergelijk_wijk))
     
     ggplot(Metrostations, aes(fill=`_Wijken_en_buurten`, y=Obj_aantal.metrostations, x= Jaar_ , group = `_Wijken_en_buurten`)) +
-      #ggplot(Metrostations, aes(fill=Jaar_, y=Obj_aantal.metrostations, x= Jaar_)) + 
       geom_bar(position="dodge", stat="identity") +
-      #      facet_grid(. ~ `_Wijken_en_buurten`) +
       ggtitle("Aantal Metrostations") + 
       labs(y="Aantal (n)", x = "Jaren")
   })
@@ -427,9 +396,7 @@ server1 <- function(input, output, session){
                      `_Wijken_en_buurten` %in% c(input$Business, input$Vergelijk_wijk))
     
     ggplot(Bakker, aes(fill=`_Wijken_en_buurten`, y=Obj_X..woningen.met.bakker.binnen.normafstand, x= Jaar_ , group = `_Wijken_en_buurten`)) +
-      #ggplot(Bakker, aes(fill=Jaar_, y=Obj_X..woningen.met.bakker.binnen.normafstand, x= Jaar_)) + 
       geom_bar(position="dodge", stat="identity") +
-      #      facet_grid(. ~ `_Wijken_en_buurten`) +
       ggtitle("Wonignen in de buurt van een bakker") + 
       labs(y="Aantal (n)", x = "Jaren")
   })
@@ -439,9 +406,7 @@ server1 <- function(input, output, session){
                          `_Wijken_en_buurten` %in% c(input$Business, input$Vergelijk_wijk))
     
     ggplot(Bushaltes2, aes(fill=`_Wijken_en_buurten`, y=Obj_aantal.bushaltes, x= Jaar_ , group = `_Wijken_en_buurten`)) +
-      #ggplot(Bushaltes2, aes(fill=Jaar_, y=Obj_aantal.bushaltes, x= Jaar_)) + 
       geom_bar(position="dodge", stat="identity") +
-      #      facet_grid(. ~ `_Wijken_en_buurten`) +
       ggtitle("Het aantal bushaltes in de buurt") + 
       labs(y="Aantal (n)", x = "Jaren")
   })
@@ -451,9 +416,7 @@ server1 <- function(input, output, session){
                                `_Wijken_en_buurten` %in% c(input$Business, input$Vergelijk_wijk))
     
     ggplot(Levens_Kwaliteit, aes(fill=`_Wijken_en_buurten`, y=Si_Oordeel.kwaliteit.van.leven, x= Jaar_ , group = `_Wijken_en_buurten`)) +
-      #ggplot(Levens_Kwaliteit, aes(fill=Jaar_, y=Si_Oordeel.kwaliteit.van.leven, x= Jaar_)) + 
       geom_bar(position="dodge", stat="identity") +
-      #      facet_grid(. ~ `_Wijken_en_buurten`) +
       ggtitle("Oordeel over de levenskwaliteit in de wijk") + 
       labs(y="Aantal (n)", x = "Jaren")
   })
@@ -463,9 +426,7 @@ server1 <- function(input, output, session){
                           `_Wijken_en_buurten` %in% c(input$Business, input$Vergelijk_wijk))
     
     ggplot(Basischolen, aes(fill=`_Wijken_en_buurten`, y=Sub_X..voldoende.aanwezig.basisscholen, x= Jaar_ , group = `_Wijken_en_buurten`)) +
-      #ggplot(Basischolen, aes(fill=Jaar_, y=Sub_X..voldoende.aanwezig.basisscholen, x= Jaar_)) + 
       geom_bar(position="dodge", stat="identity") +
-      #      facet_grid(. ~ `_Wijken_en_buurten`) +
       ggtitle("Inwoners die vinden dat er voldoende basisscholen in de buurt zijn.") + 
       labs(y="Aantal (In %)", x = "Jaren")
   })
@@ -475,9 +436,7 @@ server1 <- function(input, output, session){
                             `_Wijken_en_buurten` %in% c(input$Business, input$Vergelijk_wijk))
     
     ggplot(Stankoverlast, aes(fill=`_Wijken_en_buurten`, y=Sub_X..veel.stankoverlast.verkeer, x= Jaar_ , group = `_Wijken_en_buurten`)) +
-      #ggplot(Stankoverlast, aes(fill=Jaar_, y=Sub_X..veel.stankoverlast.verkeer, x= Jaar_)) + 
       geom_bar(position="dodge", stat="identity") +
-      #      facet_grid(. ~ `_Wijken_en_buurten`) +
       ggtitle("Inwoners die stankoverlast ervaren van het verkeer") + 
       labs(y="Aantal (In %)", x = "Jaren")
   })
@@ -488,9 +447,7 @@ server1 <- function(input, output, session){
                            `_Wijken_en_buurten` %in% c(input$Business, input$Vergelijk_wijk))
     
     ggplot(Buurt_omgang, aes(fill=`_Wijken_en_buurten`, y=Si_X..bewoners.dat.zegt.dat.buurtbewoners.veel.met.elkaar.om.gaan, x= Jaar_ , group = `_Wijken_en_buurten`)) +
-      #ggplot(Buurt_omgang, aes(fill=Jaar_, y=Si_X..bewoners.dat.zegt.dat.buurtbewoners.veel.met.elkaar.om.gaan, x= Jaar_)) + 
       geom_bar(position="dodge", stat="identity") +
-      #      facet_grid(. ~ `_Wijken_en_buurten`) +
       ggtitle("In hoeverre gaan inwoners van een buurt met elkaar om") + 
       labs(y="Aantal (In %)", x = "Jaren")
   })
@@ -500,44 +457,10 @@ server1 <- function(input, output, session){
                          `_Wijken_en_buurten` %in% c(input$Business, input$Vergelijk_wijk))
     
     ggplot(Vernieling, aes(fill=`_Wijken_en_buurten`, y=Fi_Vernielde.kapotte.banken..vuilnisbakken.etc.komt.vaak.voor.als.buurtprobleem, x= Jaar_ , group = `_Wijken_en_buurten`)) +
-      #ggplot(Vernieling, aes(fill=Jaar_, y=Fi_Vernielde.kapotte.banken..vuilnisbakken.etc.komt.vaak.voor.als.buurtprobleem, x= Jaar_)) + 
       geom_bar(position="dodge", stat="identity") +
-      #      facet_grid(. ~ `_Wijken_en_buurten`) +
       ggtitle("Ervaren overlast door vernieling van openbare voorzieningen") + 
       labs(y="Aantal (n)", x = "Jaren")
   })
-  
-  
-  
-  
-  # output$treepred<-renderText({
-  #   test <-   predicter(fit, c(input$Input1, input$Input2 ,input$Input3  , input$Input4))
-  #   test3 <-  colnames(test)[,which(test  > 0) ]
-  #    test2 <- subset(buurten2018, buurten2018$Codering_code %in% names(test3) , select = `_Wijken_en_buurten`)
-  #    test4 <- as.vector(test2[1])
-  #    as.character(lol4)
-  #    
-  
-  
-  #       lol <- predicter(fit, c("high", "high", "high", "high"))
-  #       lol2 <-  lol[,which(lol  > 0) ]
-  #       lol3 <- subset(buurten2018, buurten2018$Codering_code %in% names(lol2) , select = `_Wijken_en_buurten`)
-  #       lol4 <- as.vector(lol3[1])
-  #       lol5 <-  names(lol2)
-  #       lol6 <- subset(Buurt.Pol2018,Buurt.Pol2018@data$buurtcode %in%  lol5)
-  
-  
-  
-  #      test <-   predicter(fit, c(input$Input1, input$Input2 ,input$Input3  , input$Input4))
-  #      test3 <-  test[,which(test  > 0) ]
-  #      #test2 <- subset(buurten2018, buurten2018$Codering_code %in% names(test3) , select = `_Wijken_en_buurten`)
-  #      test4 <-  names(test3)
-  #      selected_polygon <- subset(Buurt.Pol2018,Buurt.Pol2018@data$buurtcode %in%  test4)
-  
-  
-  
-  
-  #})
   
 }
 

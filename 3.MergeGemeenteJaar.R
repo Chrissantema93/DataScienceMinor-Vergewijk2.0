@@ -4,6 +4,15 @@
 #####################################
 
 MergeGemeenteJaar <- function(PATH,year) {
+  #----------------------------------------------
+  # Deze functie is nodig om de gemeentedata te kunnen koppelen aan de CBS data
+  # De onderstaande code haalt eerst alle soortengemeentedata naar binnen.
+  # Als er zaken zijn die niet goed zijn, dan wordt dit opgeschoond/ verwijderd.
+  # Ook zijn er buurten die hier niet/ dubbel voorkomen. Deze wijken worden samgegevoegd/ gedupliceerd,
+  # en vervolgens worden buurten gelijk gemaakt aan het CBS dataset
+  # Om de data te kunnen koppelen worden er tot slot buurtcodes (CBS) toegevoegd aan alle records.  
+  #----------------------------------------------
+  
   
   # ophalen alle categorien van dit jaar  
   g_obj <- read.csv(file = paste(PATH, "gemeente ",year," fi_obj.csv", sep="")  , sep = ';',stringsAsFactors = FALSE)

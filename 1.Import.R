@@ -6,9 +6,9 @@
 #Alles in environment verwijderen
 remove(list = ls())
 
-#####################################
-#Hulp functies
-#####################################
+###################################################################
+#Hulp functies voor het installeren en laden van de libraries
+###################################################################
 detachAllPkgs <- function() {
   basic.packages <- c("package:stats","package:graphics","package:grDevices","package:utils","package:datasets","package:methods","package:base")
   
@@ -44,7 +44,7 @@ InstallAndLoadPkgs(c("shiny"       , # Om de data te presenteren
                      "sp"          , # Voor het mergen van de Spatial Polygon data
                      "geojsonio"   , # Voor zover ik weet wordt deze niet meer gebruikt
                      "DMwR"        , # voor knnpredicter
-                     "lme4"        , 
-                     "shinydashboard"
+                     "lme4"        , # Voor Regressie
+                     "shinydashboard" #Voor de opmaak van Shiny
                      ))
 
