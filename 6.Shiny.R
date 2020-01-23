@@ -149,7 +149,19 @@ server1 <- function(input, output, session){
   observeEvent(input$Sliders, {
     showModal(modalDialog(
       title = "Kies uw wijk.",
-      paste0("Door aan de onderstaande sliders te schuiven kiest u, u perfecte wijk. Geschikte wijken lichten wit op, op de kaart.'",'.'),
+      paste0(
+        "Door aan de onderstaande sliders te schuiven kiest u, u perfecte wijk. Geschikte wijken lichten wit op, op de kaart.'",
+        '.'
+        
+        ),
+      div("Cultuur en recreatie: de hoeveelheid parken, enz"),
+      div("Dichtheid bevolking:"),
+      div(),
+      div(),
+      div(),
+      div(),
+      div(),
+      div(),
       easyClose = TRUE,
       footer = NULL
     ))
