@@ -30,6 +30,7 @@ ui1 <- dashboardPage(
                     fluidRow(
                       column(4,
                              h2("Financieel"),
+                             actionButton("Huizenprijs", "?"),
                              sliderInput(inputId = "Huisprijs", label = "Gemiddelde woningwaarde x 1000",
                                          min = min_ww, 
                                          max = max_ww,
@@ -40,6 +41,7 @@ ui1 <- dashboardPage(
                              br(),
                              hr(),
                              h2("Interesse"),
+                             actionButton("Sliders", "?"),
                              sliderTextInput(inputId = 'Input1', label = 'Cultuur & recreatie: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
                              sliderTextInput(inputId = 'Input2', label = 'Dichtheid bevolking: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
                              sliderTextInput(inputId = 'Input3', label = 'Parkeergelegenheid: ', choices = c("low_m", "low", "mid", "high", "high_p"), selected = 'low', grid = TRUE),
@@ -133,6 +135,26 @@ ui1 <- dashboardPage(
 
 
 server1 <- function(input, output, session){
+ 
+   observeEvent(input$Huizenprijs, {
+      showModal(modalDialog(
+        title = "Budget voor het huis.",
+        paste0("Kies hier het budget voor u woning. Wijken die passen bij u budget lichten rood op, op de kaart. 
+               Neem zowel een grens naar onder als naar boven als u meer diversiteit heeft. Let op: 'Er staan in elke wijk goedkope, en duurdere huizen'",'.'),
+        easyClose = TRUE,
+        footer = NULL
+        ))
+  })
+  
+  observeEvent(input$Sliders, {
+    showModal(modalDialog(
+      title = "Kies uw wijk.",
+      paste0("Door aan de onderstaande sliders te schuiven kiest u, u perfecte wijk. Geschikte wijken lichten wit op, op de kaart.'",'.'),
+      easyClose = TRUE,
+      footer = NULL
+    ))
+  })
+  
   
   ######################################
   #         Generieke zaken (begin)    #
