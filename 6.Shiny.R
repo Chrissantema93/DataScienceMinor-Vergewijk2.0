@@ -154,14 +154,16 @@ server1 <- function(input, output, session){
         '.'
         
         ),
-      div("Cultuur en recreatie: de hoeveelheid parken, enz"),
-      div("Dichtheid bevolking:"),
-      div(),
-      div(),
-      div(),
-      div(),
-      div(),
-      div(),
+      div("Cultuur & recreatie: de hoeveelheid parken, restauranten en musea."),
+      div("Dichtheid bevolking: de hoeveelheid personen per km²."),
+      div("Parkeergelegenheid: de hoeveelheid ruimte om te parkeren."),
+      div("Woninggrootte: gemiddelde woning groote."),
+      div("Inkomen: gemiddelde inkomen per huishouden van de buurt."),
+      div("Wijkgrootte: de groote van de wijk."),
+      div("Onderhoud omgeving: onderhoud aan natuur, infrastructuur en openbare voorzieningen"),
+      div("Openbaar vervoer: bereikbaarheid buurt, werk en openbare gelegenheid OV."),
+      div("Ontwikkeling: de vooruitgang in de wijk."),
+      
       easyClose = TRUE,
       footer = NULL
     ))
