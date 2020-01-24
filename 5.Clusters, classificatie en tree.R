@@ -69,24 +69,7 @@ grid.arrange(plot1, plot2 , plot3, plot4)
 #Catagoriën toewijzen
 #####################################
 curateDataSet <- function(dataset) {
-  # curateColumn <- function(col) {
-  #   cSd <- sd(col)
-  #   cMean <- mean(col)
-  #   
-  #   high <- qnorm(0.7, mean = cMean, sd= cSd)
-  #   low  <- qnorm(0.3, mean = cMean, sd= cSd)
-  #   curateValue <- function(value){
-  #     if(value <= low){
-  #       return("low")
-  #     }
-  #     else if((value > low) && (value < high)){
-  #       return("mid")
-  #     }
-  #     else{
-  #       return("high")
-  #     }
-  #   }
-  #   
+  
   
     curateColumn <- function(col) {
       cSd <- sd(col)
@@ -173,18 +156,6 @@ target <- CreateDicisionForumla(xTarg, yFeat)
 fit <- rpart(target, data = train, method = "class", cp = 0.000001)
 draw.tree(fit, print.levels = TRUE)
 
-# predicter <- function(tree, prediction){
-#   nCols <- 4
-#   if(length(prediction) > nCols && length(prediction) < nCols){
-#     stop("prediction moet een vector zijn van precies 4 factors, te kiezen uit low, mid en high")
-#   }
-#   
-#   df <- data.frame(matrix(ncol = nCols, nrow = 0))
-#   res <- rbind(df, prediction)
-#   colnames(res) <- colnames(Test.set)[-c(1,2)]
-#   
-#   print(predict(tree, res ,type="prob", na.action = "na.exclude"))
-# }
 
 predicter <- function(tree, prediction) {
   yNCols <- length(yFeat)

@@ -26,7 +26,7 @@ MergeGemeenteJaar <- function(PATH,year) {
   colnames(g_si)  <- paste("Si", colnames(g_si), sep = "_")
   colnames(g_fi)  <- paste("Fi", colnames(g_fi), sep = "_")
   
-  # alles naar ??n dataset mergen
+  # sub, obj, fi(vi) en si samenveoegen tot één dataframe 
   merged_g <- merge(
     x = merge(x = g_sub, y = g_obj, by.x = "Sub_wijknr", by.y = "Obj_wijknr"), 
     y = merge(x = g_si, y = g_fi, by.x = "Si_wijknr", by.y = "Fi_wijknr"), 
@@ -49,12 +49,13 @@ MergeGemeenteJaar <- function(PATH,year) {
   
   NumericColumns <- c()
   
+  #kolommen omzetten naar numeric values
   for (i in 1:ncol(testRow)) {
     if (!is.na(as.numeric(testRow[1,i]))) {
       NumericColumns[i] <- i
     }
   }
-  
+  #niet numerieke kolommen verwijderen, omdat hier geen voorspellingen op gedaan kunnen worden.
   NumericColumns <- NumericColumns[!is.na(NumericColumns)]
   
   #kolommen omzetten naar numeric

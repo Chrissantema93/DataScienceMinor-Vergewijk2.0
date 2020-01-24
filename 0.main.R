@@ -16,3 +16,4 @@ source("3.5.Functions.R")
 source("4.Opschonen van alle datasets.R")
 source("5.Clusters, classificatie en tree.R")
 runApp("6.Shiny.R")
+
