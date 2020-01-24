@@ -45,6 +45,7 @@ InstallAndLoadPkgs(c("shiny"       , # Om de data te presenteren
                      "geojsonio"   , # Voor zover ik weet wordt deze niet meer gebruikt
                      "DMwR"        , # voor knnpredicter
                      "lme4"        , # Voor Regressie
-                     "shinydashboard" #Voor de opmaak van Shiny
+                     "shinydashboard", #Voor de opmaak van Shiny
+                     "caret"
                      ))
 
